@@ -24,7 +24,7 @@
 #include <stdarg.h>
 #include <stddef.h>
 #include <time.h>
-
+#include "machine.h"
 
 #ifdef LOCAL
 #define debug(format, ...) { printf("[%s",#__VA_ARGS__);printf("] : ") ; printf(format"\n",__VA_ARGS__);}
