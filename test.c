@@ -25,49 +25,62 @@
 #include <stddef.h>
 #include <time.h>
 
-const char wilaya_naissance[58][32] = {
-"Adrar","Chlef","Laghouat","Oum El Bouaghi","Batna","Béjaïa","Biskra","Béchar","Blida","Bouïra","Tamanrasset","    Tébessa","Tlemcen","Tiaret","Tizi Ouzou","Alger","Djelfa","Jijel","Sétif","Saïda","Skikda","Sidi Bel Abbès","Annab    a","Guelma","Constantine","Médéa","Mostaganem","M'Sila","Mascara","Ouargla","Oran","El Bayadh","Illizi","Bordj Bou     Arréridj","Boumerdès","El Tarf","Tindouf","Tissemsilt","El Oued","Khenchela","Souk Ahras","Tipaza","Mila","Aïn De    fla","Naâma","Aïn Témouchent","Ghardaïa","Relizane","El M'Ghair","El Menia","Ouled Djellal","Bordj Baji Mokhtar","    Béni Abbès","Timimoun","Touggourt","Djanet","In Salah","In Guezzam"
-
-};
-
-
-
-const char groupe_sanguin[8][3] = {"O+","A+","B+","O-","A-","AB+","B-","AB-"};
-
-const char grade[17][30] = {"Général de corps d’armée"," Général-Major","Général","Colonel","Lieutenant-colonel","Commandant","Capitaine","Lieutenant","Sous-lieutenant","Aspirant","Adjudant-chef","Adjudant","Sergent-chef","Sergent","Caporal-chef","Caporal","Djoundi"
-};
-
-const char force_armee[8][50] = {
-	"Armée de terre","Armée de l’air","Marine nationale","Défense aérienne du territoire","Gendarmerie nationale","Garde républicaine","Département du renseignement et de la sécurité","Santé militaire"
-};
-
-const char region_militaire[6][16] = {
-	"1RM-Blida","2RM-Oran","3RM-Béchar","4RM-Ouargla","5RM-Constantine","6RM-Tamanrasset"
-};
-
- // structure d'un enregistrement                                                                                 
-typedef struct Tenreg {     
-	char  matricule[7];  // 7 * 1 = 7 bytes                                                                        
-	char nom[20];     // 20 * 1 = 20 bytes      
-	char prenom[20];  // 20 * 1 = 20 bytes                                                                         
-	char date_naissance[12];   // 12 * 1 = 12 bytes                                                                
-	char wilaya_naissance[32];   // 33 * 1 = 33 bytes                                                              
-	char groupe_sanguin[3];  // 3 * 1 = 3 bytes                                                                    
-	char grade[30];   // 30 * 1 = 30 bytes                    
-	char force_armee[50];   // 50 * 1 = 50 bytes     
-	char region_militaire[16];  // 16 * 1 = 16 bytes                                                               
-  // la taille de l'enregistrement est :  bytes                                                                  
-} Tenreg;   
-
-                                                                                                              
 #ifdef LOCAL
-#define debug(format, ...) { printf("[%s",#__VA_ARGS__);printf("] : ") ; printf(format"\n",__VA_ARGS__);}
+#define debug(format, ...) { printf("[%s",#__VA_ARGS__);printf("] : ") ; printf(format"\n",__VA_ARGS__);} 
 #else
 #define debug(...) 42
-#endif
+#endif                                           
+
+
+char *rand_nom() { 
+	static const char lettres[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";          
+	char *nom = (char*) malloc (32 * sizeof(char));
+	for (int i = 0; i < 31; i++) {
+		nom[i] = lettres[(int) (rand() % (sizeof(lettres) - 1))];
+	}
+	nom[31] = '\0';
+	return nom;
+}    
+
+char *rand_date() {
+	char *date = (char*) malloc (11 * sizeof(char));
+	date[3] = rand() % 2 + 1;
+	if (date[3] == 2 + '0') {
+		date[2] = 0 + '0';
+		date[1] = 0 + '0';
+		date[0] = rand() % 4 + '0';
+	} else if (date[3] ==  1 + '0') {
+		date[2] = 9 + '0';
+		date[1] = rand() % 6 + 4 + '0';
+		date[0] = rand() % 10 + '0';
+	}
+	date[4] = '/';
+	date[5] = rand() % 2 + '0';
+	if (date[5] == 1 + '0') {
+		date[6] = rand() % 2 + '0';
+	} else if (date[4] == 0 + '0') {
+		date[6] = rand() % 10 + '0';
+	}
+	date[7] = '/';
+	date[8] =  rand() % 4 + '0';
+	if (date[8] ==  3 + '0') {
+		date[9] = rand() % 3 + '0';
+	} else {
+		date[9] = rand() % 10 + '0';
+	}
+	date[10] = '\0';
+	return date;
+}
+
+
+int rand_wilaya() { return (rand() % 58 + 1);}     
 
 int main () {
-	printf("%d", (int) sizeof(Tenreg));
+	static const char lettres[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";          
+	for (int i = 0; i < 10; i++) {
+		printf("%s\t", rand_nom());
+		printf("%s\n", rand_date());
+	}
 
 	printf("\nTime elapsed : %.3f s.\n",1.0 * clock() /CLOCKS_PER_SEC);
 	return 0;

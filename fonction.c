@@ -132,3 +132,52 @@ void Alloc_Bloc(TOVC *F) {
 	Aff_entete(F, 1, entete(F, 1) + 1);		// mise a jour du nombre de bloc dans l'entete
 }
 
+/*Les fonction pour generer les champs aleatoirement*/
+
+// fonction pour generer la matricule
+int rand_matricule() {return (rand() % 999999 +  111111);}
+// fonction pour generer le nom
+char *rand_nom() { 
+   static const char lettres[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+   char *nom = (char*) malloc (32 * sizeof(char));  
+   for (int i = 0; i < 31; i++) {
+      nom[i] = lettres[(int) (rand() % (sizeof(lettres) - 1))]; 
+   } 
+   nom[31] = '\0';                                                                                               
+	return nom;          
+}
+// fonction pour generer le prenom
+char *rand_prenom() {
+   static const char lettres[] = "abcdefghijklmnopqrstuvwxyz";
+   char *prenom = (char*) malloc (35 * sizeof(char));  
+   for (int i = 0; i < 34; i++) {
+      prenoom[i] = lettres[(int) (rand() % (sizeof(lettres) - 1))]; 
+   } 
+   prenom[34] = '\0';
+	return prenom;
+}
+// fonction pour generer la date de naissance
+char *date_naissance() {
+
+}
+// fonction pour generer la wilaya de naissance
+int rand_wilaya() { return (rand() % 58 + 1);}
+// fonction pour generer le groupe sanguin
+int rand_groupe_sanguin() { return (rand() % 8 + 1);}
+// fonction pour generer le grade
+int rand_grade() { return (rand() % 17 + 1);}
+// fonction pour genererla force armee
+int rand_force_armeee() { return (rand() % 8 + 1);}
+// fonction pour generer la region militaire
+int region_militaire () { return (rand() % 6 + 1);}
+
+
+
+
+/* Module pour chargement initial du fichier LObarreF */
+void chargement_initial(char *nom_fichier, ) {
+
+
+
+
+}
