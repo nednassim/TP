@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdbool.h>
-#include <conio.h>
 #include <assert.h>
 #include <time.h>
 
@@ -20,7 +20,7 @@ typedef struct Tenreg {
 	char nom[31];    		 		 // le nom (31 bytes)
    char prenom[34]; 				 // le prenom (34 bytes)
 	char date_naissance[11];	 // la date de naissance (11 bytes)
-	int wilaya;   					 // la wilaya de naissance (4 bytes)
+	int wilaya_naissance; 		 // la wilaya de naissance (4 bytes)
 	int groupe_sanguin;	    	 // le groupe sanguin (4 bytes)
 	int grade;				 		 // le grade (4 bytes)
 	int force_armee;				 // la force armee (4 bytes)
@@ -40,7 +40,7 @@ typedef struct Tbloc Buffer;	 // declaraion du tampon
 
 // structure de l'entete
 typedef struct Entete {
-   int nb;     	 // nombre de bloc utilises (4 bytes)
+   int nb;     	 // nombre de blocs utilises (4 bytes)
 	int tete; 		 // le pointeur tete	(4 bytes)
 	int queue; 		 // le pointeur queue	(4 bytes)
 	int libre;	 	 // la position libre du bloc queue (4 bytes)
@@ -51,7 +51,7 @@ typedef struct Entete {
 
 // structure du fichier LObarreF (fichier cu comme tableau, non ordonne avec enregistrements de taille fixe)
 typedef struct LObarreF {
-   FILE *fichier;  // 12 bytes (8 bytes + 4 bytes du padding)
+   FILE *fich;  // 12 bytes (8 bytes + 4 bytes du padding)
    Entete entete;  // 24 bytes
    // la taille de la structure du fichier est : 36 bytes
 } LObarreF;
@@ -59,7 +59,7 @@ typedef struct LObarreF {
 
 /* La machine abstraite d'un fichier LObarreF */
 void LireDir(LObarreF *fichier, int i , Buffer *buf);   // procedure pour lire un buffer du fichier LObarreF
-void EcrireDir(LObarreF *fichier, int i, Buffer *buf);  // procedure pour ecrire un buffer dans fichier LObarreF
+void EcrireDir(LObarreF *fichier, int i, Buffer buf);  // procedure pour ecrire un buffer dans fichier LObarreF
 int entete(LObarreF *fichier, int i);    					  // fonction retourne un champ de l'entete
 void Aff_entete(LObarreF *fichier,int i , int valeur);  // procedure pour modifier l'entete
 LObarreF *Ouvrir(char nom_physique[20], char mode);     // fonction pour ouvrir un fichier LObarreF
