@@ -1,142 +1,12 @@
-#include "machine.h"
+#include "machine.c"
 
 // variables generales
 LObarreF *F;	// fichier de structure LObarreF
 Buffer buf;		// region tampon dans la MC
 
-/*Le modele*/
-// fonction retourne un champ de l'entete
-int entete(LObarreF *F, int i) {
-	switch (i) {
-		case 1: {
-			return(F->entete.nb);
-			break;
-		}
-		case 2: {
-			return(F->entete.tete);
-			break;
-		}
-		case 3: {
-			return (F->entete.queue);
-			break;
-		}
-		case 4: {
-			return (F->entete.libre);
-			break;
-		}
-		case 5: {
-			return (F->entete.cpt_inser);
-			break;
-		}
-		case 6: {
-			return (F->entete.cpt_supp);
-			break;
-		}
-	}
-}
- 
-// procedure pour  modifier l'entete
-void Aff_entete(LObarreF *F,int i , int val) {
-	switch (i) {
-      case 1: {
-         F->entete.nb = val;
-         break;
-      }
-      case 2: {
-         F->entete.tete = val;
-         break;
-      }
-      case 3: {
-         F->entete.queue= val;
-         break;
-      }
-      case 4: {
-         F->entete.libre = val;
-         break;
-		}
-      case 5: {
-         F->entete.cpt_inser= val;
-         break;
-      }
-  	   case 6: {
-         F->entete.cpt_supp = val;
-         break;
-      }
-	}
-}
-
-// procedure pour lire un buffer du fichier
-void LireDir(LObarreF *F, int i , Buffer *buf) {
-   fseek(F->fich, sizeof(Entete) + (i - 1) * sizeof(Buffer), SEEK_SET);
-   fread(buf, sizeof(Buffer), 1, F->fich);
-}
-
-// procedure pour ecrire un buffer dans fichier
-void EcrireDir(LObarreF *F, int i, Buffer buf) {
-   fseek(F->fich, sizeof(Entete) + (i - 1) * sizeof(Buffer), SEEK_SET);
-   fwrite(&buf, sizeof(Buffer), 1, F->fich);
-}
-
-// fonction pour ouvrir un fichier LObarreF
-LObarreF *Ouvrir(char *nom_fichier, char mode) {
-	F = (LObarreF*) malloc(sizeof(LObarreF));
-	if ((mode == 'a') || (mode == 'A')) {
-		F->fich = fopen(nom_fichier, "rb+");
-		if (F->fich != NULL) {
-			rewind(F->fich);
-			fread(&(F->entete), sizeof(Entete), 1, F->fich);
-		} else {
-			perror("Fichier mal ouvert \n");
-			exit(1);
-		}
-	} else if ((mode == 'n') || (mode == 'N')) {
-		F->fich = fopen(nom_fichier, "wb+");
-		if (F->fich != NULL) {
-			Aff_entete(F, 1, 0);
-			Aff_entete(F, 2, 1);
-			Aff_entete(F, 3, 1);
-			Aff_entete(F, 4, 0);
-			Aff_entete(F, 5, 0);
-			Aff_entete(F, 6, 0);
-			rewind(F->fich);
-			fwrite(&(F->entete), sizeof(Entete), 1, F->fich);
-		} else {
-			perror("Fichier mal cree \n");
-			exit(1);
-		}
-	} else {
-		perror("Format d'ouverture non disponible\n");
-		exit(1);
-	}
-	return (F);
-}
-
-// fonction pour fermer un fichier LObarreF
-void Fermer(LObarreF *F) {
-   rewind(F->fich);												   //	repositionnement en debut du fichier
-   fwrite(&(F->entete), sizeof(Entete), 1, F->fich);		// eenregistrement de l'entete
-   rewind(F->fich);													//	repositionnement den debut du fichier
-	fclose(F->fich);													// fermeture du fichier
-   free(F);																// liberation du pointeur fichier
-}
-
-// procedure pour allouer un bloc dans un fichier LObarreF
-void Alloc_Bloc(LObarreF *F) {
-	Buffer *buf = malloc(sizeof(Buffer));	// allocation d'un buffer
-	LireDir(F, entete(F, 3), buf);			// lecture du bloc queue
-	buf->suiv = entete(F, 1) + 1;				// mise a jour du bloc queue au nouveau bloc queue
-	EcrireDir(F, entete(F, 3), *buf);		// ecriture du bloc dans le fichier
-	Aff_entete(F, 3, entete(F, 1) + 1);		// mise a jour de la queue dans l'entete
-	buf->suiv = -1;								//	mise a NIL du suivant de la queue
-	buf->nb = 0;									// initialisation du nouveau bloc queue
-	EcrireDir(F, entete(F, 3), *buf);		// ecriture du nouveau bloc queueu
-	Aff_entete(F, 1, entete(F, 1) + 1);		// mise a jour du nombre de bloc dans l'entete
-}
-
 /*Les fonction pour generer les champs aleatoirement*/
-
 // fonction pour generer la matricule
-int rand_matricule() {return (rand() % 999999 +  111111);}
+int rand_matricule() {return (rand() % 888889 +  111111);}
 
 // fonction pour generer le nom
 char *rand_nom() {
@@ -238,20 +108,6 @@ Tenreg creer_perso() {
    personnel.force_armee = rand_force_armee();
    personnel.region_militaire = rand_region_militaire();
    return personnel;
-}
-
-// procedure pour afficher les informations d'un personnel militaire
-void afficher_perso(Tenreg personnel, int i) {
-   printf("Le personnel : %d\n", i);
-   printf("Matricule : %d\n", personnel.matricule);
-   printf("Nom : %s\n", personnel.nom);
-   printf("Prenom : %s\n", personnel.prenom);
-   printf("Date de naissance : %s\n", personnel.date_naissance);
-   printf("Wilaya de naissance : %d\n", personnel.wilaya_naissance);
-   printf("Groupe sanguin: %d\n", personnel.groupe_sanguin);
-   printf("Grade : %d\n", personnel.grade);
-   printf("Force armee : %d\n", personnel.force_armee);
-   printf("Region militaire : %d\n", personnel.region_militaire);
 }
 
 /* Module de recherche dans un fichier LObarreF */
@@ -378,13 +234,96 @@ void chargement_initial(char *nom_fichier, int N) {
 	Aff_entete(F, 5, N);		//	mise a jour du compteur d'insertion
 }
 
+
+/* Les modules d'affichage */
+// procedure pour afficher les informations d'un personnel militaire
+void Afficher_Perso(Tenreg personnel, int i) {
+	int len = 44 - ((i / 10) ? 2 : 1) - 14;
+   printf("*| Personnel : %d  |%*s\n", i, len, "|*");
+	printf("*| ---------------%*s\n", 30, "|*");
+   printf("*| Matricule : %d %*s \n", personnel.matricule, 26, "|*");
+	int len1 = 44 - strlen(personnel.nom) - 6;
+   printf("*| Nom : %s %*s\n", personnel.nom, len1, "|*");
+	int len2 = 44 - strlen(personnel.prenom) - 9;
+   printf("*| Prenom : %s %*s\n", personnel.prenom, len2, "|*");
+   printf("*| Date de naissance : %s %*s\n", personnel.date_naissance, 14, "|*");
+  	int len3 = 44 - ((personnel.wilaya_naissance / 10) ? 2 : 1) - 22;
+   printf("*| Wilaya de naissance : %d %*s\n", personnel.wilaya_naissance, len3, "|*");
+   printf("*| Groupe sanguin: %d %*s\n", personnel.groupe_sanguin, 27, "|*");
+  	int len4 = 44 - ((personnel.grade / 10) ? 2 : 1) - 8;
+	printf("*| Grade : %d %*s\n", personnel.grade, len4, "|*");
+   printf("*| Force armee : %d %*s\n", personnel.force_armee, 29, "|*");
+   printf("*| Region militaire : %d %*s\n", personnel.region_militaire, 24, "|*");
+}
+
+
+// procedure pour afficher un bloc dans un fichier LObarreF
+//void Afficher_Bloc(LObarreF *F, int i) {
+void Afficher_Bloc(Tbloc B, int i) {
+	char str[] = "#**********************************************#"; 
+	char str1[] = "*+--------------------------------------------+*";
+	printf("%s\n", str);
+	int len = 44 - ((i / 10) ? 2 : 1) - 9;
+	printf("*| Bloc : %d | %*s\n", i, len, "|*");
+	printf("%s\n", str1);
+	for (int i = 0; i < B.nb; i++) {
+		Afficher_Perso(B.tab[i], i);
+		printf("%s\n", str1);
+	}
+	printf("%s\n", str);
+}
+
+// procedure pour afficher l'entete d'un fichier LObarreF
+//void Afficher_Entete(LObarreF F) {
+void Afficher_Entete(Entete E) {
+	char nb[3];
+	char tete[4];
+	char queue[4];
+	char cpt_inser[8];
+	char cpt_supp[8];
+	sprintf(nb, "%d", E.nb);
+	sprintf(tete, "% 3d", E.tete);
+	sprintf(queue, "% 3d", E.queue);
+	sprintf(cpt_inser, "% 7d", E.cpt_inser);
+	sprintf(cpt_supp, "% 7d", E.cpt_supp);
+	char str[] = "+-----------------+------+-------+----------------------+-------------------------+";
+	printf("+-----------------+\n");
+	printf("|     Entete	  |\n");
+	printf("%s\n", str);
+	printf("| Nombre de Blocs | Tete | Queue | Compteur d'insertion | Compteur de suppression |\n");
+	printf("%s\n", str);
+	printf("|      		  |      | 	 |		 	|  	 		  |\n");
+	printf("| 	%s 	  | %s  | %s   |     %s		| 	 %s	  |\n", nb, tete, queue, cpt_inser, cpt_supp);
+	printf("|      		  |      | 	 |		 	|  	 		  |\n");
+	printf("%s\n", str);
+}
+
+
+// procedure pour afficher un fichier LObarreF
+void Afficher_Fichier(LObarreF *F) {
+//	Afficher_Entete(F.entete);
+	for (int i = 0; i < F->entete.nb; i++) {
+//		Afficher_Bloc(F, i);
+	}
+}
+
+
+
 int main () {
    srand(time(NULL));
-   for (int i = 0; i < 10; i ++) {
+   for (int i = 0; i < 3; i ++) {
       Tenreg pers = creer_perso();
-      afficher_perso(pers, i + 1);
-      printf("#************************#\n");
+		buf.tab[i] = pers;
+		buf.nb++;
    }
+	Entete E;
+	E.nb = 5;
+	E.tete = 1;
+	E.queue = 5;
+	E.cpt_inser = 854;
+	E.cpt_supp = 10403;
+	Afficher_Entete(E);
+	Afficher_Bloc(buf, 1);
    printf("\nTime elapsed : %.3f s.\n",1.0 * clock() /CLOCKS_PER_SEC);
    return 0;
 }

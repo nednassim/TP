@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include <string.h>
 #include <stdbool.h>
 #include <assert.h>
@@ -43,10 +44,9 @@ typedef struct Entete {
    int nb;     	 // nombre de blocs utilises (4 bytes)
 	int tete; 		 // le pointeur tete	(4 bytes)
 	int queue; 		 // le pointeur queue	(4 bytes)
-	int libre;	 	 // la position libre du bloc queue (4 bytes)
    int cpt_inser;  // compteur d'insertions (4 bytes) 
-   int cpt_supp;   // compteur d'insertions (4 bytes) 
-  	// la taille de l'entete est : 24 bytes
+   int cpt_supp;   // compteur de suppression (4 bytes) 
+  	// la taille de l'entete est : 20 bytes
 } Entete;
 
 // structure du fichier LObarreF (fichier cu comme tableau, non ordonne avec enregistrements de taille fixe)
@@ -58,17 +58,17 @@ typedef struct LObarreF {
 
 
 /* La machine abstraite d'un fichier LObarreF */
-void LireDir(LObarreF *fichier, int i , Buffer *buf);   // procedure pour lire un buffer du fichier LObarreF
-void EcrireDir(LObarreF *fichier, int i, Buffer buf);  // procedure pour ecrire un buffer dans fichier LObarreF
-int entete(LObarreF *fichier, int i);    					  // fonction retourne un champ de l'entete
-void Aff_entete(LObarreF *fichier,int i , int valeur);  // procedure pour modifier l'entete
-LObarreF *Ouvrir(char nom_physique[20], char mode);     // fonction pour ouvrir un fichier LObarreF
-void Fermer(LObarreF *fichier);   							  // fonction pour fermer un fichier LObarreF
-void Alloc_Bloc(LObarreF *fichier); 						  // procedure pour allouer un bloc dans un fichier LObarreF
-void Creation_Fichier(LObarreF *fichier,int n);  		  // procedure pour creer un fichier LObarreF
+void LireDir(LObarreF *F, int i , Buffer *buf);   	 // procedure pour lire un buffer du fichier LObarreF
+void EcrireDir(LObarreF *F, int i, Buffer buf);  	 // procedure pour ecrire un buffer dans fichier LObarreF
+int entete(LObarreF *F, int i);    					    // fonction retourne un champ de l'entete
+void Aff_entete(LObarreF *F,int i , int valeur);  	 // procedure pour modifier l'entete
+LObarreF *Ouvrir(char nom_physique[20], char mode); // fonction pour ouvrir un fichier LObarreF
+void Fermer(LObarreF *F);   							  	 // fonction pour fermer un fichier LObarreF
+void Alloc_Bloc(LObarreF *F); 						  	 // procedure pour allouer un bloc dans un fichier LObarreF
+void Creation_Fichier(LObarreF *F,int n);  		  	 // procedure pour creer un fichier LObarreF
 
 /* Les modules d'affichage */
-void Afficher_Bloc(LObarreF *fichier,int i);    // procedure pour afficher un bloc dans un fichier LObarreF
-void Afficher_entete(LObarreF *fichier);    		// procedure pour afficher l'entete d'un fichier LObarreF
-void Afficher_Fichier(LObarreF *fichier);   		// procedure pour afficher un fichier LObarreF
+//void Afficher_Bloc(LObarreF *F,int i);    // procedure pour afficher un bloc dans un fichier LObarreF
+//void Afficher_Entete(LObarreF *F);    		// procedure pour afficher l'entete d'un fichier LObarreF
+void Afficher_Fichier(LObarreF *F);   		// procedure pour afficher un fichier LObarreF
 
