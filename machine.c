@@ -58,6 +58,7 @@ void Aff_entete(LObarreF *F,int i , int val) {
 void LireDir(LObarreF *F, int i , Buffer *buf) {
    fseek(F->fich, sizeof(Entete) + (i - 1) * sizeof(Buffer), SEEK_SET);
    fread(buf, sizeof(Buffer), 1, F->fich);
+	rewind(F->fich);
 }
 
 // procedure pour ecrire un buffer dans fichier
@@ -109,7 +110,7 @@ void Fermer(LObarreF *F) {
 }
 
 // procedure pour allouer un bloc dans un fichier LObarreF
-void Alloc_Bloc(LObarreF *F) {
+Buffer *Alloc_Bloc(LObarreF *F) {
    Buffer *buf = malloc(sizeof(Buffer));  // allocation d'un buffer
    LireDir(F, entete(F, 3), buf);         // lecture du bloc queue
    buf->suiv = entete(F, 1) + 1;          // mise a jour du bloc queue au nouveau bloc queue
@@ -119,5 +120,6 @@ void Alloc_Bloc(LObarreF *F) {
    buf->nb = 0;                           // initialisation du nouveau bloc queue
    EcrireDir(F, entete(F, 3), *buf);      // ecriture du nouveau bloc queue
    Aff_entete(F, 1, entete(F, 1) + 1);    // mise a jour du nombre de bloc dans l'entete
+	return buf;
 }
 

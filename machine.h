@@ -64,11 +64,11 @@ int entete(LObarreF *F, int i);    					    // fonction retourne un champ de l'e
 void Aff_entete(LObarreF *F,int i , int valeur);  	 // procedure pour modifier l'entete
 LObarreF *Ouvrir(char nom_physique[20], char mode); // fonction pour ouvrir un fichier LObarreF
 void Fermer(LObarreF *F);   							  	 // fonction pour fermer un fichier LObarreF
-void Alloc_Bloc(LObarreF *F); 						  	 // procedure pour allouer un bloc dans un fichier LObarreF
-void Creation_Fichier(LObarreF *F,int n);  		  	 // procedure pour creer un fichier LObarreF
+Buffer  *Alloc_Bloc(LObarreF *F); 					  	 // procedure pour allouer un bloc dans un fichier LObarreF
+//void Chargement_Initial(char *nom_fichier, LObarreF *F, int N); 	 // procedure pour creer un fichier LObarreF
 
 /* Les modules d'affichage */
-//void Afficher_Bloc(LObarreF *F,int i);    // procedure pour afficher un bloc dans un fichier LObarreF
-//void Afficher_Entete(LObarreF *F);    		// procedure pour afficher l'entete d'un fichier LObarreF
-void Afficher_Fichier(LObarreF *F);   		// procedure pour afficher un fichier LObarreF
+void Afficher_Bloc(LObarreF *F,int i);    // procedure pour afficher un bloc dans un fichier LObarreF
+void Afficher_Entete(LObarreF *F);    		// procedure pour afficher l'entete d'un fichier LObarreF
+void Afficher_Fichier(char *nom_fichier);   		// procedure pour afficher un fichier LObarreF
 
