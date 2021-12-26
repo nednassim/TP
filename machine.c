@@ -110,7 +110,7 @@ void Fermer(LObarreF *F) {
 }
 
 // procedure pour allouer un bloc dans un fichier LObarreF
-Buffer *Alloc_Bloc(LObarreF *F) {
+void Alloc_Bloc(LObarreF *F) {
    Buffer *buf = malloc(sizeof(Buffer));  // allocation d'un buffer
    LireDir(F, entete(F, 3), buf);         // lecture du bloc queue
    buf->suiv = entete(F, 1) + 1;          // mise a jour du bloc queue au nouveau bloc queue
@@ -120,6 +120,5 @@ Buffer *Alloc_Bloc(LObarreF *F) {
    buf->nb = 0;                           // initialisation du nouveau bloc queue
    EcrireDir(F, entete(F, 3), *buf);      // ecriture du nouveau bloc queue
    Aff_entete(F, 1, entete(F, 1) + 1);    // mise a jour du nombre de bloc dans l'entete
-	return buf;
 }
 

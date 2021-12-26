@@ -226,8 +226,7 @@ void Suppression(char *nom_fichier, int matricule) {
 }
 
 
-/* Module pour chargement initial du fichier LObarreF */
-//LObarreF *Chargement_Initial(char *nom_fichier, int N) {
+// Module pour chargement initial du fichier LObarreF 
 void Chargement_Initial(char *nom_fichier, int N) {
 	Tenreg personnel;
 	int i, j;
@@ -251,12 +250,22 @@ void Chargement_Initial(char *nom_fichier, int N) {
 	}
 
 	buf.nb = j;		// le dernier bloc
+	buf.suiv = -1;
 	EcrireDir(F, i, buf);
 	Aff_entete(F, 1, i);		//	mise a jour du nombre de blocs
 	Aff_entete(F, 3, i);		//	mise a jour du dernier bloc
 	Aff_entete(F, 4, N);		//	mise a jour du compteur d'insertion
 
 	Fermer(F);
+}
+
+
+// Module d'epuration dans un fichier LObarreF
+void Epuration(char *nom_fichier) {
+	F = Ouvrir(nom_fichier, 'A');
+		
+
+
 }
 
 
@@ -296,29 +305,31 @@ void Afficher_Bloc(LObarreF *F, int i) {
 		printf("%s\n", str1);
 	}
 	printf("%s\n", str);
+	printf("\t\t *| Bloc : %d  |*\n", i );
+	printf("\t\t * * * * * * * *\n");
 }
 
 // procedure pour afficher l'entete d'un fichier LObarreF
 void Afficher_Entete(LObarreF *F) {
-	char nb[3];
+	char nb[5];
 	char tete[4];
-	char queue[4];
+	char queue[6];
 	char cpt_inser[8];
 	char cpt_supp[8];
 	sprintf(nb, "%d", F->entete.nb);
 	sprintf(tete, "% 3d", F->entete.tete);
-	sprintf(queue, "% 3d", F->entete.queue);
+	sprintf(queue, "% 5d", F->entete.queue);
 	sprintf(cpt_inser, "% 7d", F->entete.cpt_inser);
 	sprintf(cpt_supp, "% 7d", F->entete.cpt_supp);
-	char str[] = "+-----------------+------+-------+----------------------+-------------------------+";
+	char str[] = "+-----------------+------+---------+----------------------+-------------------------+";
 	printf("+-----------------+\n");
 	printf("|     Entete	  |\n");
 	printf("%s\n", str);
-	printf("| Nombre de Blocs | Tete | Queue | Compteur d'insertion | Compteur de suppression |\n");
+	printf("| Nombre de Blocs | Tete |  Queue  | Compteur d'insertion | Compteur de suppression |\n");
 	printf("%s\n", str);
-	printf("|      		  |      | 	 |		 	|  	 		  |\n");
-	printf("| 	%s 	  | %s  | %s   |     %s		| 	 %s	  |\n", nb, tete, queue, cpt_inser, cpt_supp);
-	printf("|      		  |      | 	 |		 	|  	 		  |\n");
+	printf("|      		  |      | 	   |		 	  |  	 		    |\n");
+	printf("| 	%s 	  | %s  |  %s  |     %s	  | 	  %s 	    |\n", nb, tete, queue, cpt_inser, cpt_supp);
+	printf("|      		  |      | 	   |		 	  |   	 		    |\n");
 	printf("%s\n", str);
 }
 
@@ -328,14 +339,20 @@ void Afficher_Fichier(char *nom_fichier) {
 	F = Ouvrir(nom_fichier, 'A');
 	Afficher_Entete(F);
 	for (int i = 0; i < F->entete.nb; i++) {
+	//	for (int i = 0; i < 2; i++) {
 		Afficher_Bloc(F, i + 1);
-		printf("\n");
+/*
+		printf("\t\t      *\n");
+		printf("\t\t      *\n");
+		printf("\t\t    * * *\n");
+		printf("\t\t     ***\n");
+		printf("\t\t      *\n");
+*/
 	}
+//	Afficher_Bloc(F, 3);
 	Afficher_Entete(F);
 	Fermer(F);
 }
-
-
 
 int main () {
    srand(time(NULL));
@@ -350,17 +367,19 @@ int main () {
 	E.queue = 5;
 	E.cpt_inser = 854;
 	E.cpt_supp = 10403;
-*/
-	
-	Chargement_Initial("in",0);
-//	Afficher_Fichier("in");
-	int i, j, trouve;
-//	Recherche("in", 273126, &trouve, &i, &j);
 
-//	debug("%d %d %d", i, j, trouve);
-//	Tenreg personnel = creer_perso();
-//	Insertion("in", personnel);
+	Afficher_Fichier("in");
+	int i, j, trouve;
+	Recherche("in", 273126, &trouve, &i, &j);
+
+	debug("%d %d %d", i, j, trouve);
+	Tenreg personnel = creer_perso();
+	Insertion("in", personnel);
 	Suppression("in", 411382);
+
+*/
+	Chargement_Initial("in", 100);
+//	debug("%d", (int)(sizeof(Buffer)));
 	Afficher_Fichier("in");
 	printf("\nTime elapsed : %.3f s.\n",1.0 * clock() /CLOCKS_PER_SEC);
    return 0;

@@ -8,3 +8,5 @@ Structure simples de fichiers de type LObarreF
 	*/ Module d'insertion
 	*/ Module de modification
 	*/ Module de suppression physique
+
+3) Creation du module d'epuration
