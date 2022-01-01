@@ -56,6 +56,23 @@ typedef struct LObarreF {
    // la taille de la structure du fichier est : 36 bytes
 } LObarreF;
 
+typedef struct Index1 {
+	int cle;			// la cle du personnel	
+	int adr;			// l'adresse du personnel
+	// la taille d'un index1 est : 12 bytes
+} Index1;
+
+// structure d'un index 
+typedef struct Index {
+   int cle;						// la cle d'un personnel
+   int adr;						// l'adresse de ce personnel dans le fichier LObarreF
+   int age;						// l'age d'un personnel	
+   int grade;					// le grade d'un personnel
+   int force_armee;			//	la force armee d'un personnel
+   int region_militaire;	// la region militaire d'un personnel
+	// la taille d'un index est : 24 bytes
+} Index;
+
 
 /* La machine abstraite d'un fichier LObarreF */
 void LireDir(LObarreF *F, int i , Buffer *buf);   	 // procedure pour lire un buffer du fichier LObarreF

@@ -70,6 +70,7 @@ void EcrireDir(LObarreF *F, int i, Buffer buf) {
  // fonction pour ouvrir un fichier LObarreF
 LObarreF *Ouvrir(char *nom_fichier, char mode) {
    LObarreF *F = (LObarreF*) malloc(sizeof(LObarreF));
+	memset(F, 0, sizeof(LObarreF));
    if ((mode == 'a') || (mode == 'A')) {
       F->fich = fopen(nom_fichier, "rb+");
       if (F->fich != NULL) {

@@ -24,6 +24,7 @@
 #include <stdarg.h>
 #include <stddef.h>
 #include <time.h>
+#include <openssl/sha.h>
 #include "machine.h"
 
 #ifdef LOCAL
