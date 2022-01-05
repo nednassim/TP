@@ -11,30 +11,29 @@ int rand_matricule() {return (rand() % 888889 +  111111);}
 
 // fonction pour generer le nom
 char *rand_nom() {
-		static const char lettres[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-		char *nom = (char*) malloc (31 * sizeof(char));
-		int taille = rand() % 28 + 3;
-		for (int i = 0; i < taille; i++) {
-			nom[i] = lettres[(int) (rand() % (sizeof(lettres) - 1))];
-		}
-		nom[taille] = '\0';
-		return nom;
+	static const char lettres[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	char *nom = (char*) malloc (31 * sizeof(char));
+	int taille = rand() % 28 + 3;
+	for (int i = 0; i < taille; i++) {
+		nom[i] = lettres[(int) (rand() % (sizeof(lettres) - 1))];
 	}
+	nom[taille] = '\0';
+	return nom;
+}
 	// fonction pour generer le prenom
-	char *rand_prenom() {
-		static const char lettres[] = "abcdefghijklmnopqrstuvwxyz";
-
-		char *prenom = (char*) malloc (34 * sizeof(char));
-		int taille = rand() % 30 + 4;
+char *rand_prenom() {
+	static const char lettres[] = "abcdefghijklmnopqrstuvwxyz";
+	char *prenom = (char*) malloc (34 * sizeof(char));
+	int taille = rand() % 30 + 4;
 	for (int i = 0; i < taille; i++) {
 		prenom[i] = lettres[(int) (rand() % (sizeof(lettres) - 1))];
 	}
 	prenom[taille] = '\0';
 	return prenom;
-	}
-	// fonction pour generer la date de naissance
-	char *rand_date() {
+}
+
+// fonction pour generer la date de naissance
+char *rand_date() {
 	char *date = (char*) malloc (11 * sizeof(char));
 	date[0] = rand() % 2 + 1 + '0';
 	if (date[0] == 2 + '0') {
@@ -123,20 +122,23 @@ void Recherche(char *nom_fichier, int matricule, int *trouve, int *i, int *j) {
 	// si le fichier est non-vide
 	if (entete(F,1)) {
 		LireDir(F, *i, &buf);	// lecture d'un buffer
-		while (!(*trouve) && (*i) <= F->entete.queue) { 	// tant que non trouve et non fin de fichier
+		while (!(*trouve) && (*i) != -1) { 	// tant que non trouve et non fin de fichier
 			for (int k = 0; k < buf.nb; k++) { 		// recherche dans le bloc
 //				debug("%d %d %d", buf.tab[k].matricule, matricule, *i);	
-				if (buf.tab[k].matricule == matricule) {	// le personnel est trouve
+				if (buf.tab[k].matricule == matricule) {	// le personnel est trouve et non efface 
 					(*trouve) = 1;
 					(*j) = k;
 					break;
 				}	
 			}
 			if (*trouve) break;
-			(*i)++;
-			//			(*i) = buf.suiv;
+//			(*i)++;
+			debug("%d", buf.suiv);
+			(*i) = buf.suiv;
 			LireDir(F, *i, &buf);
 		}
+	} else {
+		perror("Fichier est vide!\n");	
 	}
 	Fermer(F);
 }
@@ -185,39 +187,36 @@ void Insertion(char *nom_fichier, Tenreg personnel) {
 void Suppression(char *nom_fichier, int matricule) {
 	int trouve;
 	int i, j;
-	Buffer buf1;
+	Buffer buf1, buf2;
 	Recherche(nom_fichier, matricule, &trouve, &i, &j);
 	if (trouve) {
 		F = Ouvrir(nom_fichier, 'A');
-		LireDir(F, i, &buf);
 		// le bloc concerne est le bloc queue
-		if (j == entete(F, 3) - 1) {		
-			if (j == buf.nb - 1) {	// le dernier enregistrement
-				buf.nb--;
-				EcrireDir(F, i, buf);
-				Aff_entete(F, 5, entete(F, 5) + 1);	 	// mise a jour du compteur de suppresssion
+		if (i == entete(F, 3)) {
+			LireDir(F, i, &buf);
+			buf.tab[j] = buf.tab[buf.nb - 1];		// ecrasement de l'enregistrement par le dernier enregistrement
+			buf.nb--;									// decrementation du nombre d'enregistrements dans le bloc
+			if (buf.nb > 0) {
+				EcrireDir(F, i, buf);					
 			} else {
-				buf.tab[j] = buf.tab[buf.nb - 1];		// ecrasement de l'enregistrement par le dernier enregistrement
-				buf.nb--;									// decrementation du nombre d'enregistrements dans le bloc
-				EcrireDir(F, i, buf);					
-				Aff_entete(F, 5, entete(F, 5) + 1);	 	// mise a jour du compteur de suppresssion	
+				Aff_entete(F, 1, entete(F, 1) - 1);	
 			}
+			Aff_entete(F, 5, entete(F, 5) + 1);	 	// mise a jour du compteur de suppresssion	
 		} else {
-		// le bloc concerne n'est pas le bloc queue
-			LireDir(F, entete(F, 3), &buf1);
-			// cas 1: dernier bloc contient un seul personnel
-			if (buf1.nb == 1) {
-				buf.tab[j] = buf1.tab[buf1.nb - 1];
-				EcrireDir(F, i, buf);					
-				Aff_entete(F, 1, entete(F, 1) - 1);		// mise a jour du nombre de bloc utilises
+			// le bloc concerne n'est pas le bloc queue
+			LireDir(F, i, &buf1);
+			LireDir(F, entete(F, 3), &buf2);
+			buf1.tab[j] = buf2.tab[buf2.nb - 1];
+			buf2.nb--;
+			EcrireDir(F, i, buf1);					
+			if (buf2.nb > 0) {
+			// cas 1: dernier bloc contient plusieurs personnel ( > 1)
+				EcrireDir(F, entete(F, 3), buf2);
 				Aff_entete(F, 3, entete(F, 3) - 1);		// mise a jour de la queue
 				Aff_entete(F, 5, entete(F, 5) + 1);		// mise a jour du compteur de suppresssion	
 			} else {
-			// cas 2: dernier bloc contient plusieurs personnel ( > 1)
-				buf.tab[j] = buf1.tab[buf1.nb - 1];		// ecrasement de l'enregistrement par le dernier enregistrement
-				buf.nb--;									// decrementation du nombre d'enregistrements dans le bloc
-				EcrireDir(F, i, buf);					
-				EcrireDir(F, entete(F, 3), buf1);
+			// cas 2: dernier bloc contient un seul personnel
+				Aff_entete(F, 1, entete(F, 1) - 1);		// mise a jour du nombre de bloc utilises
 				Aff_entete(F, 5, entete(F, 5) + 1);	 	// mise a jour du compteur de suppresssion
 			}
 		}
@@ -230,7 +229,7 @@ void Suppression1(char *nom_fichier, int i, int j) {
 	Buffer buf1;
 	LireDir(F, i, &buf);
 	// le bloc concerne est le bloc queue
-	if (j == entete(F, 3) - 1) {		
+	if (i == entete(F, 3)) {		
 		if (j == buf.nb - 1) {	// le dernier enregistrement
 			buf.nb--;
 			EcrireDir(F, i, buf);
@@ -246,12 +245,12 @@ void Suppression1(char *nom_fichier, int i, int j) {
 		LireDir(F, entete(F, 3), &buf1);
 		// cas 1: dernier bloc contient un seul personnel
 		if (buf1.nb == 1) {
-			buf.tab[j] = buf1.tab[buf1.nb - 1];
+			buf.tab[j] = buf1.tab[0];
 			EcrireDir(F, i, buf);					
 			Aff_entete(F, 1, entete(F, 1) - 1);		// mise a jour du nombre de bloc utilises
 			Aff_entete(F, 3, entete(F, 3) - 1);		// mise a jour de la queue
 			Aff_entete(F, 5, entete(F, 5) + 1);		// mise a jour du compteur de suppresssion	
-		} else {
+		} else if (buf1.nb > 1) {
 		// cas 2: dernier bloc contient plusieurs personnel ( > 1)
 			buf.tab[j] = buf1.tab[buf1.nb - 1];		// ecrasement de l'enregistrement par le dernier enregistrement
 			buf.nb--;									// decrementation du nombre d'enregistrements dans le bloc
@@ -312,7 +311,8 @@ void Chargement_Initial(char *nom_fichier, int N) {
 	Fermer(F);
 }
 
-void Lire_Table_Index(char *nom_fichier, char *nom_fichier1) {
+// Module pour extraire la table d'index secondaire du fichier d'index principale
+void Index_Index1(char *nom_fichier, char *nom_fichier1) {
 	FILE *G = fopen(nom_fichier, "rb");
 	FILE *H = fopen(nom_fichier1, "wb+");
 
@@ -330,8 +330,28 @@ void Lire_Table_Index(char *nom_fichier, char *nom_fichier1) {
 	fclose(H);
 }
 
-// Module pour trier la table d'index
-void merge(Index1 *arr, int p, int q, int r) {
+// Module pour extraire la table d'index secondaire du fichier d'index principale
+void Index_Index5(char *nom_fichier, char *nom_fichier1) {
+	FILE *G = fopen(nom_fichier, "rb");
+	FILE *H = fopen(nom_fichier1, "wb+");
+
+	Index index;
+	Index5 index5;
+	memset(&index, 0, sizeof(Index));
+	memset(&index5, 0, sizeof(Index5));
+
+	while (fread(&index, sizeof(Index), 1, G) == 1) {
+		index5.cle = index.cle;
+		index5.adr = index.adr; 
+		index5.region_militaire = index.region_militaire;
+		index5.age = index.age;
+		fwrite(&index5, 1, sizeof(index5), H);
+	}
+	fclose(G);
+	fclose(H);
+}
+
+void Fusion(Index1 *arr, int p, int q, int r) {
 	// Create L ← A[p..q] and M ← A[q+1..r]
    int n1 = q - p + 1;
    int n2 = r - q;
@@ -343,10 +363,7 @@ void merge(Index1 *arr, int p, int q, int r) {
    for (int j = 0; j < n2; j++) {
       M[j] = arr[q + 1 + j];
 	}
-	// Maintain current index of sub-arrays and main array
-    int i = 0, j = 0, k = p;
-   // Until we reach either end of either L or M, pick larger among
-   // elements L and M and place them in the correct position at A[p..r]
+   int i = 0, j = 0, k = p;
    while (i < n1 && j < n2) {
       if (L[i].cle <= M[j].cle) {
          arr[k] = L[i];   i++;
@@ -355,8 +372,6 @@ void merge(Index1 *arr, int p, int q, int r) {
       }
       k++;
    }
-   // When we run out of elements in either L or M,
-   // pick up the remaining elements and put in A[p..r]
    while (i < n1) {
       arr[k] = L[i];
       i++;  k++;
@@ -367,8 +382,7 @@ void merge(Index1 *arr, int p, int q, int r) {
    }
 }
 
-
-
+// Module pour trier la table d'index par tri fusion
 void Trier(Index1 *arr, int l, int r) {
 	 if (l < r) {
     // m is the point where the array is divided into two subarrays
@@ -376,31 +390,30 @@ void Trier(Index1 *arr, int l, int r) {
     Trier(arr, l, m);
     Trier(arr, m + 1, r);
     // Merge the sorted subarrays
-    merge(arr, l, m, r);
+    Fusion(arr, l, m, r);
    }
 }
  
 // Module d'epuration dans un fichier LObarreF
 void Epuration(char *nom_fichier) {
-	int  N = entete(F, 4) - entete(F, 5);
 	F = Ouvrir(nom_fichier, 'A');
 	FILE *G = fopen("index1.bin", "rb");
+
+	int N = entete(F, 4) - entete(F, 5);
 	Index1 table_index1[N];	
 	for (int i = 0; i < N; i++) {
 		fread(&table_index1[i], sizeof(Index1), 1, G);
 	}
-	for (int i = 0; i < N; i++) {
-		debug("%d %d", i, table_index1[i].cle);
-	}
 	Trier(table_index1, 0, N - 1);  
+
 	int j = 0;
 	Index1 temp[N];
 	for (int i  = 0; i < N - 1; i++) {
 		if (table_index1[i].cle !=  table_index1[i + 1].cle) {
 			temp[j++] = table_index1[i];
-//		i++;
 		} else {
-			Suppression1(nom_fichier, table_index1[i + 1].adr / 85, table_index1[i + 1].adr % 85);
+			debug("%d %d", (table_index1[i + 1].adr / 85) + 1, table_index1[i + 1].adr % 85);
+			Suppression1(nom_fichier, (table_index1[i + 1].adr / 85) + 1, table_index1[i + 1].adr % 85);
 		}	
 	}
 	temp[j++] = table_index1[N - 1];
@@ -408,11 +421,11 @@ void Epuration(char *nom_fichier) {
 		table_index1[i] = temp[i];
 	}
 	for (int i = 0; i < j; i++) {
-		debug("%d %d", i, table_index1[i].cle);
+//		debug("%d %d", i, table_index1[i].cle);
 	}
 }
 
-
+/*********************************************************************************/
 /* Les modules d'affichage */
 // procedure pour afficher les informations d'un personnel militaire
 void Afficher_Perso(Tenreg personnel, int i) {
@@ -434,7 +447,6 @@ void Afficher_Perso(Tenreg personnel, int i) {
    printf("*| Region militaire : %d %*s\n", personnel.region_militaire, 24, "|*");
 }
 
-
 // procedure pour afficher un bloc dans un fichier LObarreF
 void Afficher_Bloc(LObarreF *F, int i) {
 	char str[] = "#**********************************************#"; 
@@ -450,7 +462,7 @@ void Afficher_Bloc(LObarreF *F, int i) {
 	}
 	printf("%s\n", str);
 	printf("\t\t *| Bloc : %d  |*\n", i );
-	printf("\t\t * * * * * * * *\n");
+	printf("\t\t *  * * * * * * *\n");
 }
 
 // procedure pour afficher l'entete d'un fichier LObarreF
@@ -477,23 +489,23 @@ void Afficher_Entete(LObarreF *F) {
 	printf("%s\n", str);
 }
 
-
 // procedure pour afficher un fichier LObarreF
 void Afficher_Fichier(char *nom_fichier) {
 	F = Ouvrir(nom_fichier, 'A');
 	Afficher_Entete(F);
-//	for (int i = 0; i < F->entete.nb; i++) {
-	for (int i = 0; i < 1; i++) {
-		Afficher_Bloc(F, i + 1);
+	Afficher_Bloc(F, 1);
 /*
+	for (int i = 0; i < F->entete.nb; i++) {
+		Afficher_Bloc(F, i + 1);
 		printf("\t\t      *\n");
 		printf("\t\t      *\n");
 		printf("\t\t    * * *\n");
 		printf("\t\t     ***\n");
 		printf("\t\t      *\n");
-*/
 	}
-//	Afficher_Bloc(F, 3);
+
+	Afficher_Bloc(F, 3);
+	*/
 	Afficher_Entete(F);
 	Fermer(F);
 }
@@ -517,8 +529,18 @@ void Afficher_Table_Index1() {
 	}
 }
 
+void Afficher_Table_Index5() {
+	FILE *F = fopen("index5.bin", "rb");
+	Index5 id;
+	int count = 1;
+	memset(&id, 0, sizeof(Index5));
+	while(fread(&id, sizeof(Index5), 1, F) == 1) {
+		debug("%d %d %d %d", id.cle, id.adr, id.region_militaire, id.age);
+	}
+}
+
 int main () {
-   srand(time(NULL));
+   srand(time(0));
 /*
 	for (int i = 0; i < 1000; i ++) {
       Tenreg pers = creer_perso();
@@ -532,22 +554,22 @@ int main () {
 	E.cpt_supp = 10403;
 
 	Afficher_Fichier("in");
+
 	int i, j, trouve;
 	Recherche("in", 273126, &trouve, &i, &j);
-
 	debug("%d %d %d", i, j, trouve);
+
 	Tenreg personnel = creer_perso();
 	Insertion("in", personnel);
 	Suppression("in", 411382);
 
 */
-	Chargement_Initial("in", 300000);
-//	Afficher_Fichier("in");
-//	Afficher_Table_Index();
-//	Lire_Table_Index("index.bin", "index1.bin");
-//	Afficher_Table_Index1();
-	Epuration("in");
+	Chargement_Initial("in", 300000);		//	Afficher_Fichier("in");
 	Afficher_Fichier("in");
+	Afficher_Table_Index();
+//	Index_Index1("index.bin", "index1.bin");
+//	Epuration("in");
+//	Afficher_Fichier("in");
 	printf("\nTime elapsed : %.3f s.\n",1.0 * clock() /CLOCKS_PER_SEC);
    return 0;
 }
