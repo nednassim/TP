@@ -57,6 +57,13 @@ typedef struct LObarreF {
 } LObarreF;
 
 
+// variables generales
+LObarreF *F;   // fichier de structure LObarreF
+Buffer buf;    // region tampon dans la MC
+
+
+/***************************** La structure index ************************************/
+
 // structure d'un index 
 typedef struct Index {
    int cle;						// la cle d'un personnel
@@ -68,19 +75,20 @@ typedef struct Index {
 	// la taille d'un index est : 24 bytes
 } Index;
 
-typedef struct Index1 {
-	int cle;			// la cle du personnel	
-	int adr;			// l'adresse du personnel
-	// la taille d'un index1 est : 12 bytes
-} Index1;
+// structure d'un bloc du fichier index
+typedef struct Tbloc_Index {
+   Index tab[b];   // un tableau d'enregistrements d'une capacite b (2040 bytes)
+	int nb;         // nombre d'enregistrements dans tab (<= b)  (4 bytes)
+   // la taille du bloc est : 2044 bytes
+} Tbloc_Index;
 
-typedef struct Index5 {
-	int cle;						// la cle du personnel	
-	int adr;						// l'adresse du personnel
-	int region_militaire;	// la region militaire d'un personnel
-	int age;						// l'age d'un personnel	
-	// la taille d'un index5 est : 16 bytes
-} Index5;
+// structure du fichier d'index (structure TOF)
+typedef struct TOF_Index {
+   int nb;		 // 4 bytes;
+	FILE *fich;  // 12 bytes
+   // la taille de la structure du fichier est : 16 bytes
+} TOF_Index;
+
 
 /* La machine abstraite d'un fichier LObarreF */
 void LireDir(LObarreF *F, int i , Buffer *buf);   	 // procedure pour lire un buffer du fichier LObarreF
