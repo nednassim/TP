@@ -63,10 +63,9 @@ void Afficher_Entete(LObarreF *F) {
 }
  
 // procedure pour afficher un fichier LObarreF
-void Afficher_Fichier(char *nom_fichier) {
-   F = Ouvrir(nom_fichier, 'A');
+void Afficher_Fichier(LObarreF *F) {
    Afficher_Entete(F);
-   Afficher_Bloc(F, 1);
+	Afficher_Bloc(F, 1);
 /*
    for (int i = 0; i < F->entete.nb; i++) {
       Afficher_Bloc(F, i + 1);
@@ -80,17 +79,21 @@ void Afficher_Fichier(char *nom_fichier) {
    Afficher_Bloc(F, 3);
 */
    Afficher_Entete(F);
-   Fermer(F);
 }  
    
 // procedure pour afficher la table d'index
-void Afficher_Table_Index(int N) {
+void Afficher_Table_Index() {
    FILE *G = fopen("index.bin", "rb");
-   Index index[N];
-   fread(&index, sizeof(Index), N, G);
-   for (int i = 0; i < N; i++) {
-      printf("%d %d %d %d %d %d\n", index[i].cle, index[i].adr, index[i].age, index[i].grade, index[i].force_armee    , index[i].region_militaire); 
-   }
+		if (G != NULL) {
+		int N;
+		memset(&N, 0, sizeof(int));
+		fread(&N, sizeof(int), 1, G);
+		Index index[N];
+		fread(&index, sizeof(Index), N, G);
+		for (int i = 0; i < N; i++) {
+			printf("%d %d %d %d %d %d\n", index[i].cle, index[i].adr, index[i].age, index[i].grade, index[i].force_armee    , index[i].region_militaire); 
+		}
+	}
    fclose(G); 
 }  
    

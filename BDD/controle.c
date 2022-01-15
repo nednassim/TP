@@ -120,7 +120,6 @@ int main () {
    		break;		  
 		}	  
 		case 3: {	// groupe sanguin
-			printf();
 			int opt;
 			scanf("%d", &opt);
 			switch(opt) {
@@ -177,7 +176,8 @@ int main () {
 	fclose(F5);
 	fclose(F6);
 	fclose(F7);
-	fclose(F8);	fclose(F9);
+	fclose(F8);	
+	fclose(F9);
 	fclose(F10);
 	printf("\nTime elapsed : %.3f s.\n",1.0 * clock() /CLOCKS_PER_SEC);
 	return 0;

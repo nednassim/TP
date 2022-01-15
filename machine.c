@@ -107,7 +107,6 @@ void Fermer(LObarreF *F) {
    fwrite(&(F->entete), sizeof(Entete), 1, F->fich);     // eenregistrement de l'entete
    rewind(F->fich);                                      // repositionnement den debut du fichier
    fclose(F->fich);                                      // fermeture du fichier
-   free(F);                                              // liberation du pointeur fichier
 }
 
 // procedure pour allouer un bloc dans un fichier LObarreF
@@ -121,61 +120,5 @@ void Alloc_Bloc(LObarreF *F) {
    buf->nb = 0;                           // initialisation du nouveau bloc queue
    EcrireDir(F, entete(F, 3), *buf);      // ecriture du nouveau bloc queue
    Aff_entete(F, 1, entete(F, 1) + 1);    // mise a jour du nombre de bloc dans l'entete
-}
-
-
-
-/***************************** La structure index ************************************/
-// procedure pour lire un buffer du fichier index 
-void LireDir_Index(TOF_Index *G, int i , Tbloc_Index *buf1) {
-   fseek(G->fich, sizeof(int) + (i - 1) * sizeof(Tbloc_Index), SEEK_SET);
-   fread(buf1, sizeof(Tbloc_Index), 1, G->fich);
-	rewind(G->fich);
-}
-
-// procedure pour ecrire un buffer dans fichier
-void EcrireDir_Index(TOF_Index *G, int i, Tbloc_Index buf1) {
-   fseek(G->fich, sizeof(int) + (i - 1) * sizeof(Tbloc_Index), SEEK_SET);
-   fwrite(&buf1, sizeof(Tbloc_Index), 1, G->fich);
-}
-
-
-// fonction pour ouvrir un fichier TOF_Index
-TOF_Index *Ouvrir_Index(char *nom_fichier, char mode) {
-   TOF_Index *G = (TOF_Index*) malloc(sizeof(TOF_Index));
-	memset(G, 0, sizeof(TOF_Index));
-   if ((mode == 'a') || (mode == 'A')) {
-      G->fich = fopen(nom_fichier, "rb+");
-      if (G->fich != NULL) {
-         rewind(G->fich);
-         fread(&(G->nb), sizeof(int), 1, G->fich);
-      } else {
-         perror("Fichier mal ouvert \n");
-         exit(1);
-      }
-   } else if ((mode == 'n') || (mode == 'N')) {
-      G->fich = fopen(nom_fichier, "wb+");
-      if (G->fich != NULL) {
-         G->nb = 0;
-         rewind(G->fich);
-         fwrite(&(G->nb), sizeof(int), 1, G->fich);
-      } else {
-         perror("Fichier mal cree \n");
-         exit(1);
-      }
-   } else {
-      perror("Format d'ouverture non disponible\n");
-      exit(1);
-   }
-   return (G);
-}
-
-// fonction pour fermer un fichier TOF_Index
-void Fermer_Index(TOF_Index *G) {
-   rewind(G->fich);                                      // repositionnement en debut du fichier
-   fwrite(&(G->nb), sizeof(int), 1, G->fich);		      // eenregistrement de l'entete
-   rewind(G->fich);                                      // repositionnement den debut du fichier
-   fclose(G->fich);                                      // fermeture du fichier
-   free(G);                                              // liberation du pointeur fichier
 }
 

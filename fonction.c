@@ -107,7 +107,7 @@ Tenreg creer_perso() {
 	return personnel;
 }
 
-void Fusion(Index *arr, int p, int q, int r) {
+void Fusion(Index *arr, int p, int q, int r, int opt) {
 	// Create L ← A[p..q] and M ← A[q+1..r]
    int n1 = q - p + 1;
    int n2 = r - q;
@@ -117,33 +117,133 @@ void Fusion(Index *arr, int p, int q, int r) {
    for (int j = 0; j < n2; j++)  M[j] = arr[q + 1 + j];
 	
    int i = 0, j = 0, k = p;
-   while (i < n1 && j < n2) {
-      if (L[i].cle <= M[j].cle) {
-         arr[k] = L[i];   i++;
-      } else {
-         arr[k] = M[j];   j++;
-      }
-      k++;
-   }
-   while (i < n1) {
-      arr[k] = L[i];
-      i++;  k++;
-   }
-   while (j < n2) {
-      arr[k] = M[j];
-      j++;	k++;
-   }
+	switch(opt) {
+		case 1: { 		// tri par rapport au cles
+			while (i < n1 && j < n2) {
+				if (L[i].cle <= M[j].cle) {
+					arr[k] = L[i];   i++;
+				} else {
+					arr[k] = M[j];   j++;
+				}
+				k++;
+			}
+			while (i < n1) {
+				arr[k] = L[i];
+				i++;  k++;
+			}
+			while (j < n2) {
+				arr[k] = M[j];
+				j++;	k++;
+			}
+			break;
+		}
+		case 2: { 		// tri par rapport a l'adresse 
+			while (i < n1 && j < n2) {
+				if (L[i].adr <= M[j].adr) {
+					arr[k] = L[i];   i++;
+				} else {
+					arr[k] = M[j];   j++;
+				}
+				k++;
+			}
+			while (i < n1) {
+				arr[k] = L[i];
+				i++;  k++;
+			}
+			while (j < n2) {
+				arr[k] = M[j];
+				j++;	k++;
+			}
+			break;
+		}
+		case 3: { 		// tri par rapport a l'age
+			while (i < n1 && j < n2) {
+				if (L[i].age <= M[j].age) {
+					arr[k] = L[i];   i++;
+				} else {
+					arr[k] = M[j];   j++;
+				}
+				k++;
+			}
+			while (i < n1) {
+				arr[k] = L[i];
+				i++;  k++;
+			}
+			while (j < n2) {
+				arr[k] = M[j];
+				j++;	k++;
+			}
+			break;
+		}
+		case 4: { 		// tri par rapport au grade
+			while (i < n1 && j < n2) {
+				if (L[i].grade <= M[j].grade) {
+					arr[k] = L[i];   i++;
+				} else {
+					arr[k] = M[j];   j++;
+				}
+				k++;
+			}
+			while (i < n1) {
+				arr[k] = L[i];
+				i++;  k++;
+			}
+			while (j < n2) {
+				arr[k] = M[j];
+				j++;	k++;
+			}
+			break;
+		}
+		case 5: { 		// tri par rapport a la force armee
+			while (i < n1 && j < n2) {
+				if (L[i].force_armee <= M[j].force_armee) {
+					arr[k] = L[i];   i++;
+				} else {
+					arr[k] = M[j];   j++;
+				}
+				k++;
+			}
+			while (i < n1) {
+				arr[k] = L[i];
+				i++;  k++;
+			}
+			while (j < n2) {
+				arr[k] = M[j];
+				j++;	k++;
+			}
+			break;
+		}
+		case 6: { 		// tri par rapport a la region militaire
+			while (i < n1 && j < n2) {
+				if (L[i].region_militaire <= M[j].region_militaire) {
+					arr[k] = L[i];   i++;
+				} else {
+					arr[k] = M[j];   j++;
+				}
+				k++;
+			}
+			while (i < n1) {
+				arr[k] = L[i];
+				i++;  k++;
+			}
+			while (j < n2) {
+				arr[k] = M[j];
+				j++;	k++;
+			}
+			break;
+		}
+	}
 }
 
 // Module pour trier la table d'index par tri fusion
-void Tri(Index *arr, int l, int r) {
+void Tri(Index *arr, int l, int r, int opt) {
 	 if (l < r) {
     // m is the point where the array is divided into two subarrays
     int m = l + (r - l) / 2;
-    Tri(arr, l, m);
-    Tri(arr, m + 1, r);
+    Tri(arr, l, m, opt);
+    Tri(arr, m + 1, r, opt);
     // Merge the sorted subarrays
-    Fusion(arr, l, m, r);
+    Fusion(arr, l, m, r, opt);
    }
 }
 
@@ -156,6 +256,7 @@ void Chargement_Initial(char *nom_fichier, int N) {
 	j = 0;
 	F = Ouvrir(nom_fichier, 'N');
 	FILE *G = fopen("index.bin", "wb+");
+	fwrite(&N, sizeof(int), 1, G);
    char *annee = (char*) malloc (5 * sizeof(char));
 	for (int k = 0; k < N; k++) {
 		memset(&personnel, 0, sizeof(Tenreg));
@@ -190,54 +291,25 @@ void Chargement_Initial(char *nom_fichier, int N) {
 	Aff_entete(F, 3, i);		//	mise a jour du dernier bloc
 	Aff_entete(F, 4, N);		//	mise a jour du compteur d'insertion
 
-	Tri(index, 0, N - 1);  
+	Tri(index, 0, N - 1, 1);  
 	fwrite(&index, sizeof(Index), N, G);
 	Fermer(F);
-	rewind(G);
 	fclose(G);
 }
 
 
-
-/* Module de recherche dans un fichier LObarreF */
-// La recherche est sequentielle 
-void Recherche(char *nom_fichier, int matricule, int *trouve, int *i, int *j) {
-	F = Ouvrir(nom_fichier, 'A');
-	(*i) = entete(F, 2);	// le numero du bloc tete
-	(*j) = 0;				// positionnemt au debut du bloc
-	(*trouve) = 0;
-
-	// si le fichier est non-vide
-	if (entete(F,1)) {
-		LireDir(F, *i, &buf);	// lecture d'un buffer
-		while (!(*trouve) && (*i) != -1) { 	// tant que non trouve et non fin de fichier
-			for (int k = 0; k < buf.nb; k++) { 		// recherche dans le bloc
-				if (buf.tab[k].matricule == matricule) {	// le personnel est trouve et non efface 
-					(*trouve) = 1;
-					(*j) = k;
-					break;
-				}	
-			}
-			if (*trouve) break;
-			(*i) = buf.suiv;
-			LireDir(F, *i, &buf);
-		}
-	} else {
-		perror("Fichier est vide!\n");	
-	}
-	Fermer(F);
-}
-
 // La recherche dichotomique en utilisant la table d'index
-void Recherche1(char *nom_fichier, int matricule, int *trouve, int *i, int *j) {
-	F = Ouvrir(nom_fichier, 'A');
+//void Recherche(char *nom_fichier, int matricule, int *trouve, int *i, int *j) {
+void Recherche(LObarreF *F, int matricule, int *trouve, int *i, int *j) {
+//	F = Ouvrir(nom_fichier, 'A');
 	FILE *G = fopen("index.bin", "rb+");
 	int N = entete(F, 4) - entete(F, 5);
 	Index index[N];
+	fseek(G, sizeof(int), SEEK_SET);
 	fread(&index, sizeof(Index), N, G);
 
 	int inf = 0, sup = N - 1, pos = 0, mid = 0;
-	*trouve = 0;
+	*i = 1; *j = 0; *trouve = 0;
 	while (inf <= sup) {
       mid = (inf + sup) / 2;
  
@@ -258,28 +330,28 @@ void Recherche1(char *nom_fichier, int matricule, int *trouve, int *i, int *j) {
 		*j = index[pos].adr % 85;
 	} else {
 		*i = entete(F, 3);		// le bloc queue
-		*j = entete(F, 4) % 85;	// la derniere position
+		*j = N  % 85;	// la derniere position
 	}
 
-	Fermer(F);
+//	Fermer(F);
 	fclose(G);
 }
 
 // Module d'insertion dans un fichier LObarreF
-void Insertion(char *nom_fichier, Tenreg personnel) {
-	int trouve, continu;
-	int i, j, k;
+//void Insertion(char *nom_fichier, Tenreg personnel) {
+void Insertion(LObarreF *F, Tenreg personnel) {
+	int trouve, i, j;
 
-	Recherche1(nom_fichier, personnel.matricule, &trouve, &i, &j);
+	Recherche(F, personnel.matricule, &trouve, &i, &j);
 	if (!trouve) {		// le personnel est inexistant
-		F = Ouvrir(nom_fichier, 'A');
+	//	F = Ouvrir(nom_fichier, 'A');
 		if (!entete(F, 1)) {		// fichier vide
 			// insertion en premier bloc en premiere position
 			buf.tab[0] = personnel;
 			buf.nb = 1;
 			buf.suiv = -1;
 			EcrireDir(F, 0, buf);
-			Aff_entete(F, 5, entete(F, 5) + 1);
+			Aff_entete(F, 4, entete(F, 4) + 1);
 		} else {						// fichier non-vide
 			// insertion en dernier bloc en derniere position
 			LireDir(F, entete(F, 3), &buf);
@@ -290,8 +362,8 @@ void Insertion(char *nom_fichier, Tenreg personnel) {
 				EcrireDir(F, entete(F, 3), buf);
 				Aff_entete(F, 4, entete(F, 4) + 1);
 			} else {
-			// cas 2: dernier bloc plein
-			// allocation d'un nouveau bloc vide
+				// cas 2: dernier bloc plein
+				// allocation d'un nouveau bloc vide
 				Alloc_Bloc(F);	
 				buf.tab[0] = personnel;
 				buf.nb = 1;
@@ -299,21 +371,141 @@ void Insertion(char *nom_fichier, Tenreg personnel) {
 				EcrireDir(F, entete(F, 3), buf);
 				Aff_entete(F, 4, entete(F, 4) + 1);		
 			}
+		} 
+		FILE *G = fopen("index.bin", "rb+");
+		if (G != NULL) {
+			int N = entete(F, 4) - entete(F, 5);
+			Index ind;
+			Index *index = (Index*) malloc (N * sizeof(Index));	
+			fseek(G, sizeof(int), SEEK_SET);
+			fread(index, sizeof(Index), N - 1, G);
+			ind.cle = personnel.matricule;
+			ind.adr = N - 1;
+			ind.grade = personnel.grade;
+			ind.force_armee = personnel.force_armee;
+			ind.region_militaire = personnel.region_militaire;
+			char *annee = (char*) malloc (5 * sizeof(char));
+			strncpy(annee, personnel.date_naissance, 4);
+			annee[4] = '\0';
+			ind.age = 2022 - atoi(annee);
+			free(annee);
+			index[N - 1] = ind;
+			Tri(index, 0, N - 1, 1);
+			rewind(G);
+			fwrite(&N, sizeof(int), 1, G);
+			fwrite(index, sizeof(Index), N, G);
+			free(index);
+			fclose(G);
 		}
-		continu = 1;
-		LireDir(F, entete(F, 1), &buf);
+//		Fermer(F);
+	} else {
+		printf("Ce personnel est existant!\n");
 	}
-	Fermer(F);
 }
 
-// Module de suppression physique dans un fichier LObarreF
-void Suppression(char *nom_fichier, int matricule) {
-	int trouve;
-	int i, j;
+
+// Module pour supprimer un  personnel a une position donnee
+void Suppression1(LObarreF *F, int i, int j) {
 	Buffer buf1, buf2;
-	Recherche1(nom_fichier, matricule, &trouve, &i, &j);
+	LireDir(F, i, &buf);
+	if (i == entete(F, 3)) {
+		LireDir(F, i, &buf);
+		buf.tab[j] = buf.tab[buf.nb - 1];		// ecrasement de l'enregistrement par le dernier enregistrement
+		buf.nb--;									   // decrementation du nombre d'enregistrements dans le bloc
+		if (buf.nb > 0) {
+			EcrireDir(F, i, buf);
+		} else {
+			if (entete(F, 3) == 1) {
+				EcrireDir(F, i, buf);
+			} else {
+				Aff_entete(F, 1, entete(F, 1) - 1);		// mise a jour du nombre de bloc utilises
+				Aff_entete(F, 3, entete(F, 3) - 1);		// mise a jour de la queue
+			}
+		}
+	} else {
+		// le bloc concerne n'est pas le bloc queue
+		LireDir(F, i, &buf1);
+		LireDir(F, entete(F, 3), &buf2);
+		buf1.tab[j] = buf2.tab[buf2.nb - 1];
+		buf2.nb--;
+		EcrireDir(F, i, buf1);
+		if (buf2.nb > 0) {
+		// cas 1: dernier bloc contient plusieurs personnel ( > 1)
+			EcrireDir(F, entete(F, 3), buf2);
+		} else {
+		// cas 2: dernier bloc contient un seul personnel
+			Aff_entete(F, 1, entete(F, 1) - 1);		// mise a jour du nombre de bloc utilises
+			Aff_entete(F, 3, entete(F, 3) - 1);		// mise a jour de la queue
+		}
+	}
+	Aff_entete(F, 5, entete(F, 5) + 1);	 	// mise a jour du compteur de suppresssion
+}
+
+// Module d'epuration dans un fichier LObarreF
+void Epuration(LObarreF *F) {
+	FILE *G = fopen("index.bin", "rb+");
+	if (G != NULL) {
+		int N;
+		fread(&N, sizeof(int), 1, G);
+		debug("%d", N);
+		Index index[N];
+		fread(&index, sizeof(Index), N, G);
+		for (int i = 0; i < N; i++) {
+			debug("%d %d", i,  index[i].cle);
+		}
+		Index *temp = (Index*) malloc (N * sizeof(Index));	
+		int j = 0;
+		for (int i = 0; i < N - 1; i++) {
+			if (index[i].cle !=  index[i + 1].cle) {
+				temp[j++] = index[i]; 
+			} else {
+				Suppression1(F, (index[i + 1].adr / 85) + 1, index[i + 1].adr % 85);
+			}	
+		}
+		temp[j] = index[N - 1];	
+		rewind(G);
+		fwrite(&j, sizeof(int), 1, G);
+		fwrite(temp, sizeof(Index), j, G);
+		free(temp);
+		fclose(G);
+	}
+}
+
+	
+
+// Module pour modifier la region militaire d'un personnel donnee par son matricule
+void Modifier_Region_Militaire(LObarreF *F, int matricule, int region_militaire) {
+	int trouve, i, j;
+
+	Recherche(F, matricule, &trouve, &i, &j);
+	if (trouve) {		// le personnel est inexistant
+		LireDir(F, i, &buf);
+		buf.tab[j].region_militaire = region_militaire;
+		EcrireDir(F, i, buf);
+		debug("%d", ((i - 1) * b + j)); 
+		FILE *G = fopen("index.bin", "rb+");
+		if (G != NULL) {
+			Index index;
+			fseek(G, sizeof(int) + ((i - 1) * b + j) * sizeof(Index), SEEK_SET);
+			fread(&index, sizeof(Index), 1, G);
+			index.region_militaire = region_militaire;
+			fseek(G, -sizeof(Index), SEEK_CUR);
+			fwrite(&index, sizeof(Index), 1, G);
+			fclose(G);
+		}
+	}
+}
+// Module de suppression physique dans un fichier LObarreF
+//void Suppression(char *nom_fichier, int matricule) {
+void Suppression(LObarreF *F, int matricule) {
+
+	int i, j, trouve;
+	Buffer buf1, buf2;
+
+	Recherche(F, matricule, &trouve, &i, &j);
+	debug("%d %d %d", i, j, trouve);
 	if (trouve) {
-		F = Ouvrir(nom_fichier, 'A');
+//		F = Ouvrir(nom_fichier, 'A');
 		// le bloc concerne est le bloc queue
 		if (i == entete(F, 3)) {
 			LireDir(F, i, &buf);
@@ -346,77 +538,180 @@ void Suppression(char *nom_fichier, int matricule) {
 			}
 		}
 		Aff_entete(F, 5, entete(F, 5) + 1);	 	// mise a jour du compteur de suppresssion
+		FILE *G = fopen("index.bin", "rb+");
+		if (G != NULL) {
+			int N;
+			fread(&N, sizeof(int), 1, G);
+			Index *index = (Index*) malloc (N * sizeof(Index));	
+			fread(index, sizeof(Index), N, G);
+			Tri(index, 0, N - 1, 2);		
+			N--;
+			index[(i - 1) * entete(F, 1) + j] = index[N];
+			Tri(index, 0, N - 1, 1);
+			rewind(G);
+			fwrite(&N, sizeof(int), 1, G);
+			fwrite(index, sizeof(Index), N, G);
+			free(index);
+			fclose(G);
+		}
 		Fermer(F);
 	}
+
+	else {
+		printf("Ce personnel est non trouve!\n");
+	}
 }
 
-void Suppression1(char *nom_fichier, int i, int j) {
-	F = Ouvrir(nom_fichier, 'A');
-	Buffer buf1, buf2;
-	LireDir(F, i, &buf);
-	if (i == entete(F, 3)) {
-		LireDir(F, i, &buf);
-		buf.tab[j] = buf.tab[buf.nb - 1];		// ecrasement de l'enregistrement par le dernier enregistrement
-		buf.nb--;									   // decrementation du nombre d'enregistrements dans le bloc
-		if (buf.nb > 0) {
-			EcrireDir(F, i, buf);					
-		} else {
-			if (entete(F, 3) == 1) {
-				EcrireDir(F, i, buf);						
-			} else {
-				Aff_entete(F, 1, entete(F, 1) - 1);		// mise a jour du nombre de bloc utilises
-				Aff_entete(F, 3, entete(F, 3) - 1);		// mise a jour de la queue
+// Module pour supprimer les personnels d'une force armee
+void Suppression_Force_Armee(LObarreF *F, int force_armee) {
+	FILE *G = fopen("index.bin", "rb+");
+	if (G != NULL) {
+		int N;
+		fread(&N, sizeof(int), 1, G);
+		Index index[N];
+		fread(&index, sizeof(Index), N, G);
+		Tri(index, 0, N - 1, 5);
+		
+		int inf = 0, sup = N - 1, pos = 0, mid = 0;
+		int i = 1, j = 0, trouve = 0;
+		while (inf <= sup) {
+			mid = (inf + sup) / 2;
+	 		if (index[mid].force_armee == force_armee) {
+				trouve = 1;
+				pos = mid;
+				break;
+			}
+			if (index[mid].force_armee > force_armee) {
+				sup = mid - 1;
+			}
+			if (index[mid].force_armee < force_armee) {
+				inf = mid + 1;
 			}
 		}
-	} else {
-		// le bloc concerne n'est pas le bloc queue
-		LireDir(F, i, &buf1);
-		LireDir(F, entete(F, 3), &buf2);
-		buf1.tab[j] = buf2.tab[buf2.nb - 1];
-		buf2.nb--;
-		EcrireDir(F, i, buf1);					
-		if (buf2.nb > 0) {
-		// cas 1: dernier bloc contient plusieurs personnel ( > 1)
-			EcrireDir(F, entete(F, 3), buf2);
-		} else {
-		// cas 2: dernier bloc contient un seul personnel
-			Aff_entete(F, 1, entete(F, 1) - 1);		// mise a jour du nombre de bloc utilises
-			Aff_entete(F, 3, entete(F, 3) - 1);		// mise a jour de la queue
+		if (trouve) {
+			int i1 = pos - 1;
+			while (index[i1].force_armee == force_armee) {
+				Suppression1(F, index[i1].adr / 85 + 1,index[i1].adr % 85);
+				index[i1] = index[N - 1];
+				i1--;
+				N--;
+			}
+			i1 = pos;
+			while (index[i1].force_armee == force_armee) {
+				Suppression1(F, index[i1].adr / 85 + 1,index[i1].adr % 85);
+				index[i1] = index[N - 1];
+				N--;
+				i1++;
+			}
+			rewind(G);
+			fwrite(&N, sizeof(int),  1 , G);
+			Tri(index, 0, N - 1, 5);
+			fwrite(&index, sizeof(Index), N, G);
 		}
 	}
-	Aff_entete(F, 5, entete(F, 5) + 1);	 	// mise a jour du compteur de suppresssion
-	Fermer(F);
+	fclose(G);
+}
+// Module pour consulter tous les personnels d'une region donnee ayant l'age dans l'intervalle donne
+void Recherche_Intervale(LObarreF *F, int region_militaire, int age_min, int age_max) {
+	FILE *G = fopen("index.bin", "rb+");
+	if (G != NULL) {
+		int N;
+		fread(&N, sizeof(int), 1, G);
+		Index index[N];
+		fread(&index, sizeof(Index), N, G);
+		Tri(index, 0, N - 1, 6);
+		int inf = 0, sup = N - 1, pos = 0, mid = 0;
+		int i = 1, j = 0, trouve = 0;
+		while (inf <= sup) {
+			mid = (inf + sup) / 2;
+	 		if (index[mid].region_militaire == region_militaire) {
+				trouve = 1;
+				pos = mid;
+				break;
+			}
+			if (index[mid].region_militaire > region_militaire ) {
+				sup = mid - 1;
+			}
+			if (index[mid].region_militaire < region_militaire) {
+				inf = mid + 1;
+			}
+		}
+
+		if (trouve) {
+			Index *ind = (Index*) malloc (N * sizeof(Index));
+			int i1 = pos - 1;
+			int j1 = 0;
+			while (index[i1].region_militaire == region_militaire) {
+				if ((index[i1].age >= age_min) && (index[i1].age <= age_max)) {
+					ind[j1++] = index[i1];
+				}	
+				i1--;
+			}
+			i1 = pos;
+			while (index[i1].region_militaire == region_militaire) {
+				if ((index[i1].age >= age_min) && (index[i1].age <= age_max)) {
+					ind[j1++] = index[i1];
+				}	
+				i1++;
+			}
+			ind = (Index*) realloc (ind, j1 * sizeof(Index));
+		}
+	}
+	fclose(G);
 }
 
-// Module d'epuration dans un fichier LObarreF
-void Epuration(char *nom_fichier) {
-	F = Ouvrir(nom_fichier, 'A');
-	FILE *G = fopen("index.bin", "rb+");
+// Module pour fragmenter le fichier en 6 fichiers selon la region militaire
+void Fragmentation(LObarreF *F) {
+	FILE *F1 = fopen("F/F1", "wb+");
+	FILE *F2 = fopen("F/F2", "wb+");
+	FILE *F3 = fopen("F/F3", "wb+");
+	FILE *F4 = fopen("F/F4", "wb+");
+	FILE *F5 = fopen("F/F5", "wb+");
+	FILE *F6 = fopen("F/F6", "wb+");
 
-	int N = entete(F, 4) - entete(F, 5);
-	Index index[N];
-	Index *temp = (Index*) calloc (N, sizeof(Index));	
-	fread(&index, sizeof(Index), N, G);
 
-	Tri(index, 0, N - 1);  
-
-	int j = 0;
-	for (int i = 0; i < N - 1; i++) {
-		if (index[i].cle !=  index[i + 1].cle) {
-			temp[j++] = index[i];
-		} else {
-			Suppression1(nom_fichier, (index[i + 1].adr / 85) + 1, index[i + 1].adr % 85);
-		}	
+	if ((F1!=NULL) && (F2!=NULL) && (F3!=NULL) && (F4!=NULL) && (F5!=NULL) && (F6!=NULL)) {
+		for (int i = 1; i <= entete(F, 1); i++) {
+			memset(&buf, 0, sizeof(Buffer));
+			LireDir(F, i, &buf);
+			for (int j = 0; j < buf.nb; j++)  {
+				int k = buf.tab[j].region_militaire;
+				switch(k) {
+					case 1: {
+						fwrite(&buf.tab[j], sizeof(Tenreg), 1, F1);
+						break;		  
+					}
+					case 2: {
+						fwrite(&buf.tab[j], sizeof(Tenreg), 1, F2);
+						break;		  
+					}
+					case 3: {
+						fwrite(&buf.tab[j], sizeof(Tenreg), 1, F3);
+						break;		  
+					}
+					case 4: {
+						fwrite(&buf.tab[j], sizeof(Tenreg), 1, F4);
+						break;		  
+					}
+					case 5: {
+						fwrite(&buf.tab[j], sizeof(Tenreg), 1, F5);
+						break;		  
+					}
+					case 6: {
+						fwrite(&buf.tab[j], sizeof(Tenreg), 1, F6);
+						break;		  
+					}			
+				}
+			}	
+		}
 	}
-	temp[j++] = index[N - 1];
-	for (int i = 0; i < j; i++) {
-		index[i] = temp[i];
-		debug("%d", index[i].cle);
-	}
-	rewind(G);
-	fwrite(&index, sizeof(Index), j, G);
-	free(temp);
-	fclose(G);
+
+	fclose(F1);
+	fclose(F2);
+	fclose(F3);
+	fclose(F4);
+	fclose(F5);
+	fclose(F6);
 }
 
 
@@ -446,13 +741,27 @@ int main () {
 	Suppression("in", 411382);
 
 */
-	Chargement_Initial("in", 300000);		//	Afficher_Fichier("in");
+	Chargement_Initial("in", 25);		//	Afficher_Fichier("in");
+//	Afficher_Table_Index();
+	
+	F = Ouvrir("in", 'A');
 
-	Afficher_Table_Index(300000);
-	Epuration("in");
+//	Tenreg personnel = creer_perso();
+//	Insertion(F, personnel);
+//	Afficher_Fichier("in");
+//	Afficher_Table_Index();
+//	Suppression(F, 425641 );
+//	Epuration(F);
+//	Modifier_Region_Militaire(F,838283  , 4);
 
-	Afficher_Fichier("in");
-//	Afficher_Table_Index(10000);
+	Afficher_Table_Index();
+//	Suppression_Force_Armee(F, 5);
+//	Fragmentation(F);
+	Suppression_Force_Armee(F, 4);
+	printf("++++++++++++++++++++++\n");
+	Afficher_Table_Index();
+	Afficher_Fichier(F);
+	Fermer(F);
 	printf("\nTime elapsed : %.3f s.\n",1.0 * clock() /CLOCKS_PER_SEC);
    return 0;
 }

@@ -103,5 +103,5 @@ void Alloc_Bloc(LObarreF *F); 					  	 // procedure pour allouer un bloc dans un
 /* Les modules d'affichage */
 void Afficher_Bloc(LObarreF *F,int i);    // procedure pour afficher un bloc dans un fichier LObarreF
 void Afficher_Entete(LObarreF *F);    		// procedure pour afficher l'entete d'un fichier LObarreF
-void Afficher_Fichier(char *nom_fichier);   		// procedure pour afficher un fichier LObarreF
+void Afficher_Fichier(LObarreF *F);   		// procedure pour afficher un fichier LObarreF
 
