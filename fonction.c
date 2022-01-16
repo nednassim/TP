@@ -600,8 +600,8 @@ void Suppression_Force_Armee(LObarreF *F, int force_armee) {
 			while (index[i1].force_armee == force_armee) {
 				Suppression1(F, index[i1].adr / 85 + 1,index[i1].adr % 85);
 				index[i1] = index[N - 1];
-				N--;
 				i1++;
+				N--;
 			}
 			rewind(G);
 			fwrite(&N, sizeof(int),  1 , G);
@@ -612,9 +612,10 @@ void Suppression_Force_Armee(LObarreF *F, int force_armee) {
 	fclose(G);
 }
 // Module pour consulter tous les personnels d'une region donnee ayant l'age dans l'intervalle donne
-void Recherche_Intervale(LObarreF *F, int region_militaire, int age_min, int age_max) {
-	FILE *G = fopen("index.bin", "rb+");
+Tenreg *Recherche_Intervale(LObarreF *F, int region_militaire, int age_min, int age_max, int *n) {
+	FILE *G = fopen("index.bin", "rb");
 	if (G != NULL) {
+		*n = 0;
 		int N;
 		fread(&N, sizeof(int), 1, G);
 		Index index[N];
@@ -639,6 +640,7 @@ void Recherche_Intervale(LObarreF *F, int region_militaire, int age_min, int age
 
 		if (trouve) {
 			Index *ind = (Index*) malloc (N * sizeof(Index));
+			Tenreg *personnels = (Tenreg*) malloc (N * sizeof(Tenreg));
 			int i1 = pos - 1;
 			int j1 = 0;
 			while (index[i1].region_militaire == region_militaire) {
@@ -655,10 +657,111 @@ void Recherche_Intervale(LObarreF *F, int region_militaire, int age_min, int age
 				i1++;
 			}
 			ind = (Index*) realloc (ind, j1 * sizeof(Index));
+			personnels = (Tenreg*) realloc (personnels, j1 * sizeof(Tenreg));
+			Tri(ind, 0, j1 - 1, 2);
+			for (int k = 0; k < j1; k++) {
+				LireDir(F, ind[k].adr / 85 + 1, &buf);
+				personnels[k] = buf.tab[ind[k].adr % 85];
+			}
+			*n = j1;
+			free(ind);
+			return personnels;
 		}
 	}
 	fclose(G);
 }
+
+// Module pour consulter tous les personnels appartenant a une categorie de grade donnee
+Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n) {
+	// 1 : Officiers-generaux : 1 : Général de corps d’armée, 2 : Général-Major, 3 : Général [1, 2, 3]
+	// 2 : Officiers-superieurs : 4 : Colonel, 5: Lieutenant-colonel, 6 : Commandant [4, 5, 6]
+	// 3 : Officiers : 7 : Capitaine, 8 :  Lieutenant, 9 : Sous-lieutenant, 10 : Aspirant [7, 8, 9, 10]
+	// 4 : Sous-officiers : 11 : Adjudant-chef, 12 : Adjudant, 13 : Sergent-chef, 14 : Sergent [11, 12, 13, 14]
+	// 5 : Hommes de troupes : 15 : Caporal-chef, 16 : Caporal, 17 : Djoundi [15, 16, 17]
+	FILE *G = fopen("index.bin", "rb");
+	if (G != NULL) {i
+		*n = 0;
+		int N;
+		fread(&N, sizeof(int), 1, G);
+		Index index[N];
+		fread(&index, sizeof(Index), N, G);
+		Tri(index, 0, N - 1, 4);
+		
+		int inf = 0, sup = N - 1, pos = 0, mid = 0;
+		int i = 1, j = 0, trouve = 0;
+		switch(categorie) {
+			case 1: {	// Officiers-generaux
+			while (inf <= sup) {
+				mid = (inf + sup) / 2;
+				if (index[mid].grade == 1) {
+					trouve = 1;
+					pos = mid;
+					break;
+				}
+				if (index[mid].grade > 1 ) {
+					sup = mid - 1;
+				}
+				if (index[mid].grade < 1) {
+					inf = mid + 1;
+				}
+			}
+			if (trouve) {
+				Index *ind = (Index*) malloc (N * sizeof(Index));
+				Tenreg *personnels = (Tenreg*) malloc (N * sizeof(Tenreg));
+				int i1 = pos - 1;
+				int j1 = 0;
+				while (index[i1].grade == 1) {
+					ind[j1++] = index[i1];
+					i1--;
+				}
+				i1 = pos;
+				while (index[i1].grade <= 3) {
+					ind[j1++] = index[i1];
+					i1++;
+				}	
+		
+
+				break;		  
+			}
+			case 2: {	// Officiers-superieurs
+			
+				break;  
+			}
+			case 3: {	// Officiers
+			
+				break;		  
+			}
+			case 4: {	// Sous-officiers 
+			
+				break;		  
+			}
+			case 5: {	// Hommes de troupes 
+			
+				break;		  
+			}
+	
+		
+		
+		}
+			ind = (Index*) realloc (ind, j1 * sizeof(Index));
+			personnels = (Tenreg*) realloc (personnels, j1 * sizeof(Tenreg));
+			Tri(ind, 0, j1 - 1, 2);
+			for (int k = 0; k < j1; k++) {
+				LireDir(F, ind[k].adr / 85 + 1, &buf);
+				personnels[k] = buf.tab[ind[k].adr % 85];
+			}
+			*n = j1;
+			free(ind);
+			return personnels;
+		}
+	}
+	fclose(G);
+}
+
+
+
+
+
 
 // Module pour fragmenter le fichier en 6 fichiers selon la region militaire
 void Fragmentation(LObarreF *F) {
@@ -754,13 +857,21 @@ int main () {
 //	Epuration(F);
 //	Modifier_Region_Militaire(F,838283  , 4);
 
-	Afficher_Table_Index();
+//	Afficher_Table_Index();
 //	Suppression_Force_Armee(F, 5);
 //	Fragmentation(F);
-	Suppression_Force_Armee(F, 4);
-	printf("++++++++++++++++++++++\n");
-	Afficher_Table_Index();
+//	printf("++++++++++++++++++++++\n");
 	Afficher_Fichier(F);
+	int n1;
+	Tenreg *personnels =	Recherche_Intervale(F, 4, 10, 30, &n1);
+
+	debug("%d", n1);
+	for (int i = 0; i < n1; i++) {
+		Afficher_Perso(personnels[i], i + 1);
+	}
+	free(personnels);
+
+
 	Fermer(F);
 	printf("\nTime elapsed : %.3f s.\n",1.0 * clock() /CLOCKS_PER_SEC);
    return 0;
