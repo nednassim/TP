@@ -34,6 +34,30 @@
 #endif
 
 int main () {
+	system("clear");
+	printf("\t\t*********************************************************************************\n");
+	printf("\t\t*\t\t\t\t\t\t\t\t\t\t*\n");
+	printf("\t\t*\t\tEcole Nationale Superieure d'Informatique (ESI)\t\t\t*\n");
+	printf("\t\t*\t\t\t\t\t\t\t\t\t\t*\n");
+	printf("\t\t*\t\t\t\t  TP SFSD\t\t\t\t\t*\n");
+	printf("\t\t*\t\tStructure simple de fichiers - Methode: LObarreF\t\t*\n");
+	printf("\t\t*\t\t\t\t\t\t\t\t\t\t*\n");
+	printf("\t\t*\t\t\tSupervise par : Dr Kermi Adel\t\t\t\t*\n");
+	printf("\t\t*\t\t\t\t\t\t\t\t\t\t*\n");
+	printf("\t\t*\t\t\t  NEDJAR Nassim	groupe 4\t\t\t\t*\n");
+	printf("\t\t*\t\t\t\t\t\t\t\t\t\t*\n");
+	printf("\t\t*\t\t\t\t\t\t\t\t\t\t*\n");
+	printf("\t\t*********************************************************************************\n");
+
+	printf("\n");
+	printf("\n");
+	printf("\n");
+	printf("\n");
+	printf("\n");
+	printf("\n");
+	printf("\n");
+	printf("\n");
+	printf("\n");
 
 
 	printf("\nTime elapsed : %.3f s.\n",1.0 * clock() /CLOCKS_PER_SEC);
