@@ -297,6 +297,152 @@ void Chargement_Initial(char *nom_fichier, int N) {
 	fclose(G);
 }
 
+// Module pour la recherche dichotomique dans la table d'index
+void Recherche_Dichotomique(Index *index, int N, int cle, int opt, int *pos, int *trouve) {
+	int inf = 0, sup = N - 1, pos1 = 0, mid = 0;
+	*trouve = 0, *pos = N - 1;
+	switch(opt) {
+		case 1: {		// recherche par rapport a la cle
+			while (inf <= sup) {
+				mid = (inf + sup) / 2;
+		 
+				if (index[mid].cle == cle) {
+					*trouve = 1;
+					pos1 = mid;
+					break;
+				}
+				if (index[mid].cle > cle) {
+					sup = mid - 1;
+				}
+				if (index[mid].cle < cle) {
+					inf = mid + 1;
+				}
+			}
+			if (*trouve) {
+				*pos = pos1;
+			} else {
+				*pos = mid;
+			}
+			break;
+		}
+		case 2: {		// recherche par rapport a l'adresse
+			while (inf <= sup) {
+				mid = (inf + sup) / 2;
+		 
+				if (index[mid].adr == cle) {
+					*trouve = 1;
+					pos1 = mid;
+					break;
+				}
+				if (index[mid].adr > cle) {
+					sup = mid - 1;
+				}
+				if (index[mid].adr < cle) {
+					inf = mid + 1;
+				}
+			}
+			if (*trouve) {
+				*pos = pos1;	
+			} else {
+				*pos = mid;
+			}
+			break;
+		}
+		case 3: {		// recherche par rapport a l'age
+			while (inf <= sup) {
+				mid = (inf + sup) / 2;
+		 
+				if (index[mid].age == cle) {
+					*trouve = 1;
+					pos1 = mid;
+					break;
+				}
+				if (index[mid].age > cle) {
+					sup = mid - 1;
+				}
+				if (index[mid].age < cle) {
+					inf = mid + 1;
+				}
+			}
+			if (*trouve) {
+				*pos = pos1;	
+			} else {
+				*pos = mid;
+			}
+			break;
+		}		  
+		case 4: {		// recherche par rapport au grade
+			while (inf <= sup) {
+				mid = (inf + sup) / 2;
+		 
+				if (index[mid].grade == cle) {
+					*trouve = 1;
+					pos1 = mid;
+					break;
+				}
+				if (index[mid].grade > cle) {
+					sup = mid - 1;
+				}
+				if (index[mid].grade < cle) {
+					inf = mid + 1;
+				}
+			}
+			if (*trouve) {
+				*pos = pos1;	
+			} else {
+				*pos = mid;
+			}
+			break;  
+		}
+		case 5: {		// recherche par rapport a la force armee
+			while (inf <= sup) {
+				mid = (inf + sup) / 2;
+		 
+				if (index[mid].force_armee == cle) {
+					*trouve = 1;
+					pos1 = mid;
+					break;
+				}
+				if (index[mid].force_armee > cle) {
+					sup = mid - 1;
+				}
+				if (index[mid].force_armee < cle) {
+					inf = mid + 1;
+				}
+			}
+			if (*trouve) {
+				*pos = pos1;
+			} else {
+				*pos = mid;
+			}
+			break;
+		}
+		case 6: {		// recherche par rapport a la region militaire
+			while (inf <= sup) {
+				mid = (inf + sup) / 2;
+		 
+				if (index[mid].region_militaire == cle) {
+					*trouve = 1;
+					pos1 = mid;
+					break;
+				}
+				if (index[mid].region_militaire > cle) {
+					sup = mid - 1;
+				}
+				if (index[mid].region_militaire < cle) {
+					inf = mid + 1;
+				}
+			}
+			if (*trouve) {
+				*pos = pos1;
+			} else {
+				*pos = mid;
+			}
+			break;		  
+		}	
+	}
+}
+
 
 // La recherche dichotomique en utilisant la table d'index
 //void Recherche(char *nom_fichier, int matricule, int *trouve, int *i, int *j) {
@@ -304,27 +450,12 @@ void Recherche(LObarreF *F, int matricule, int *trouve, int *i, int *j) {
 //	F = Ouvrir(nom_fichier, 'A');
 	FILE *G = fopen("index.bin", "rb+");
 	int N = entete(F, 4) - entete(F, 5);
+	int pos = 0;
 	Index index[N];
 	fseek(G, sizeof(int), SEEK_SET);
 	fread(&index, sizeof(Index), N, G);
+	Recherche_Dichotomique(index, N, matricule, 1, &pos, trouve);
 
-	int inf = 0, sup = N - 1, pos = 0, mid = 0;
-	*i = 1; *j = 0; *trouve = 0;
-	while (inf <= sup) {
-      mid = (inf + sup) / 2;
- 
-      if (index[mid].cle == matricule) {
-         *trouve = 1;
-         pos = mid;
-         break;
-      }
-      if (index[mid].cle > matricule) {
-         sup = mid - 1;
-		}
-		if (index[mid].cle < matricule) {
-         inf = mid + 1;
-      }
-	}
 	if (*trouve) {
 		*i = index[pos].adr / 85 + 1;
 		*j = index[pos].adr % 85;
@@ -471,8 +602,6 @@ void Epuration(LObarreF *F) {
 	}
 }
 
-	
-
 // Module pour modifier la region militaire d'un personnel donnee par son matricule
 void Modifier_Region_Militaire(LObarreF *F, int matricule, int region_militaire) {
 	int trouve, i, j;
@@ -495,10 +624,9 @@ void Modifier_Region_Militaire(LObarreF *F, int matricule, int region_militaire)
 		}
 	}
 }
-// Module de suppression physique dans un fichier LObarreF
-//void Suppression(char *nom_fichier, int matricule) {
-void Suppression(LObarreF *F, int matricule) {
 
+// Module de suppression physique dans un fichier LObarreF
+void Suppression(LObarreF *F, int matricule) {
 	int i, j, trouve;
 	Buffer buf1, buf2;
 
@@ -555,9 +683,7 @@ void Suppression(LObarreF *F, int matricule) {
 			fclose(G);
 		}
 		Fermer(F);
-	}
-
-	else {
+	} else {
 		printf("Ce personnel est non trouve!\n");
 	}
 }
@@ -567,27 +693,13 @@ void Suppression_Force_Armee(LObarreF *F, int force_armee) {
 	FILE *G = fopen("index.bin", "rb+");
 	if (G != NULL) {
 		int N;
+		int pos = 0, trouve = 0;
 		fread(&N, sizeof(int), 1, G);
 		Index index[N];
 		fread(&index, sizeof(Index), N, G);
 		Tri(index, 0, N - 1, 5);
+		Recherche_Dichotomique(index, N, force_armee, 5, &pos, &trouve);
 		
-		int inf = 0, sup = N - 1, pos = 0, mid = 0;
-		int i = 1, j = 0, trouve = 0;
-		while (inf <= sup) {
-			mid = (inf + sup) / 2;
-	 		if (index[mid].force_armee == force_armee) {
-				trouve = 1;
-				pos = mid;
-				break;
-			}
-			if (index[mid].force_armee > force_armee) {
-				sup = mid - 1;
-			}
-			if (index[mid].force_armee < force_armee) {
-				inf = mid + 1;
-			}
-		}
 		if (trouve) {
 			int i1 = pos - 1;
 			while (index[i1].force_armee == force_armee) {
@@ -611,33 +723,19 @@ void Suppression_Force_Armee(LObarreF *F, int force_armee) {
 	}
 	fclose(G);
 }
+
 // Module pour consulter tous les personnels d'une region donnee ayant l'age dans l'intervalle donne
 Tenreg *Recherche_Intervale(LObarreF *F, int region_militaire, int age_min, int age_max, int *n) {
 	FILE *G = fopen("index.bin", "rb");
 	if (G != NULL) {
 		*n = 0;
+		int pos = 0, trouve = 0;
 		int N;
 		fread(&N, sizeof(int), 1, G);
 		Index index[N];
 		fread(&index, sizeof(Index), N, G);
 		Tri(index, 0, N - 1, 6);
-		int inf = 0, sup = N - 1, pos = 0, mid = 0;
-		int i = 1, j = 0, trouve = 0;
-		while (inf <= sup) {
-			mid = (inf + sup) / 2;
-	 		if (index[mid].region_militaire == region_militaire) {
-				trouve = 1;
-				pos = mid;
-				break;
-			}
-			if (index[mid].region_militaire > region_militaire ) {
-				sup = mid - 1;
-			}
-			if (index[mid].region_militaire < region_militaire) {
-				inf = mid + 1;
-			}
-		}
-
+		Recherche_Dichotomique(index, N, region_militaire, 6, &pos, &trouve);
 		if (trouve) {
 			Index *ind = (Index*) malloc (N * sizeof(Index));
 			Tenreg *personnels = (Tenreg*) malloc (N * sizeof(Tenreg));
@@ -645,16 +743,14 @@ Tenreg *Recherche_Intervale(LObarreF *F, int region_militaire, int age_min, int 
 			int j1 = 0;
 			while (index[i1].region_militaire == region_militaire) {
 				if ((index[i1].age >= age_min) && (index[i1].age <= age_max)) {
-					ind[j1++] = index[i1];
+					ind[j1++] = index[i1--];
 				}	
-				i1--;
 			}
 			i1 = pos;
 			while (index[i1].region_militaire == region_militaire) {
 				if ((index[i1].age >= age_min) && (index[i1].age <= age_max)) {
-					ind[j1++] = index[i1];
+					ind[j1++] = index[i1++];
 				}	
-				i1++;
 			}
 			ind = (Index*) realloc (ind, j1 * sizeof(Index));
 			personnels = (Tenreg*) realloc (personnels, j1 * sizeof(Tenreg));
@@ -665,6 +761,7 @@ Tenreg *Recherche_Intervale(LObarreF *F, int region_militaire, int age_min, int 
 			}
 			*n = j1;
 			free(ind);
+			fclose(G);
 			return personnels;
 		}
 	}
@@ -679,89 +776,244 @@ Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n) {
 	// 4 : Sous-officiers : 11 : Adjudant-chef, 12 : Adjudant, 13 : Sergent-chef, 14 : Sergent [11, 12, 13, 14]
 	// 5 : Hommes de troupes : 15 : Caporal-chef, 16 : Caporal, 17 : Djoundi [15, 16, 17]
 	FILE *G = fopen("index.bin", "rb");
-	if (G != NULL) {i
-		*n = 0;
+	if (G != NULL) { 
 		int N;
 		fread(&N, sizeof(int), 1, G);
 		Index index[N];
 		fread(&index, sizeof(Index), N, G);
 		Tri(index, 0, N - 1, 4);
 		
-		int inf = 0, sup = N - 1, pos = 0, mid = 0;
-		int i = 1, j = 0, trouve = 0;
+		Index *ind = (Index*) malloc (N * sizeof(Index));
+		int pos = 1, trouve = 0, j1 = 0;
 		switch(categorie) {
 			case 1: {	// Officiers-generaux
-			while (inf <= sup) {
-				mid = (inf + sup) / 2;
-				if (index[mid].grade == 1) {
-					trouve = 1;
-					pos = mid;
-					break;
+				Recherche_Dichotomique(index, N, 1, 4, &pos, &trouve);
+				if (trouve) {
+					int i1 = pos - 1;
+					while ((i1 >= 0) && (index[i1].grade == 1)) {
+						ind[j1++] = index[i1--];
+					}
+					i1 = pos;
+					while ((i1 <= N - 1) && (index[i1].grade <= 3)) {
+						ind[j1++] = index[i1++];
+					}	
+				} else {
+					Recherche_Dichotomique(index, N, 2, 4, &pos, &trouve);
+					if (trouve) {
+						int i1 = pos - 1;
+						while ((i1 >= 0) && (index[i1].grade == 2)) {
+							ind[j1++] = index[i1--];
+						}
+						i1 = pos;
+						while (index[i1].grade <= 3) {
+							ind[j1++] = index[i1++];
+						}
+					} else {
+						Recherche_Dichotomique(index, N, 3, 4, &pos, &trouve);
+						if (trouve) {
+							int i1 = pos - 1;
+							while ((i1 >= 0) && (index[i1].grade == 3)) {
+								ind[j1++] = index[i1--];
+							}
+							i1 = pos;
+							while ((i1 <= N - 1) && (index[i1].grade == 3)) {
+								ind[j1++] = index[i1++];
+							}	
+						}
+					}
 				}
-				if (index[mid].grade > 1 ) {
-					sup = mid - 1;
-				}
-				if (index[mid].grade < 1) {
-					inf = mid + 1;
-				}
-			}
-			if (trouve) {
-				Index *ind = (Index*) malloc (N * sizeof(Index));
-				Tenreg *personnels = (Tenreg*) malloc (N * sizeof(Tenreg));
-				int i1 = pos - 1;
-				int j1 = 0;
-				while (index[i1].grade == 1) {
-					ind[j1++] = index[i1];
-					i1--;
-				}
-				i1 = pos;
-				while (index[i1].grade <= 3) {
-					ind[j1++] = index[i1];
-					i1++;
-				}	
-		
-
 				break;		  
-			}
+	 	   }
 			case 2: {	// Officiers-superieurs
-			
+				Recherche_Dichotomique(index, N, 4, 4, &pos, &trouve);
+				if (trouve) {
+					int i1 = pos - 1;
+					while ((i1 >= 0) && (index[i1].grade == 4)) {
+						ind[j1++] = index[i1--];
+					}
+					i1 = pos;
+					while ((i1 <= N - 1) && (index[i1].grade <= 6)) {
+						ind[j1++] = index[i1++];
+					}	
+				} else {
+					Recherche_Dichotomique(index, N, 5, 4, &pos, &trouve);
+					if (trouve) {
+						int i1 = pos - 1;
+						while ((i1 >= 0) && (index[i1].grade == 5)) {
+							ind[j1++] = index[i1--];
+						}
+						i1 = pos;
+						while ((i1 <= N - 1) && (index[i1].grade <= 6)) {
+							ind[j1++] = index[i1++];
+						}
+					} else {
+						Recherche_Dichotomique(index, N, 6, 4, &pos, &trouve);
+						if (trouve) {
+							int i1 = pos - 1;
+							while ((i1 >= 0) && (index[i1].grade == 6)) {
+								ind[j1++] = index[i1--];
+							}
+							i1 = pos;
+							while ((i1 <= N - 1) && (index[i1].grade == 6)) {
+								ind[j1++] = index[i1++];
+							}	
+						}
+					}
+				}		
 				break;  
 			}
 			case 3: {	// Officiers
-			
+				Recherche_Dichotomique(index, N, 7, 4, &pos, &trouve);
+				if (trouve) {
+					int i1 = pos - 1;
+					while ((i1 >= 0) && (index[i1].grade == 7)) {
+						ind[j1++] = index[i1--];
+					}
+					i1 = pos;
+					while ((i1 <= N - 1) && (index[i1].grade <= 10)) {
+						ind[j1++] = index[i1++];
+					}	
+				} else {
+					Recherche_Dichotomique(index, N, 8, 4, &pos, &trouve);
+					if (trouve) {
+						int i1 = pos - 1;
+						while ((i1 >= 0) && (index[i1].grade == 8)) {
+							ind[j1++] = index[i1--];
+						}
+						i1 = pos;
+						while ((i1 <= N - 1) && (index[i1].grade <= 10)) {
+							ind[j1++] = index[i1++];
+						}
+					} else {
+						Recherche_Dichotomique(index, N, 9, 4, &pos, &trouve);
+						if (trouve) {
+							int i1 = pos - 1;
+							while ((i1 >= 0) && (index[i1].grade == 9)) {
+								ind[j1++] = index[i1--];
+							}
+							i1 = pos;
+							while ((i1 <= N - 1) && (index[i1].grade <= 10)) {
+								ind[j1++] = index[i1++];
+							}	
+						} else {
+							Recherche_Dichotomique(index, N, 10, 4, &pos, &trouve);
+							if (trouve) {
+								int i1 = pos - 1;
+								while ((i1 >= 0) && (index[i1].grade == 10)) {
+									ind[j1++] = index[i1--];
+								}
+								i1 = pos;
+								while ((i1 <= N - 1) && (index[i1].grade == 10)) {
+									ind[j1++] = index[i1++];
+								}
+							}	
+						}
+					}
+				}		
 				break;		  
 			}
 			case 4: {	// Sous-officiers 
-			
+				Recherche_Dichotomique(index, N, 11, 4, &pos, &trouve);
+				if (trouve) {
+					int i1 = pos - 1;
+					while ((i1 >= 0) && (index[i1].grade == 11)) {
+						ind[j1++] = index[i1--];
+					}
+					i1 = pos;
+					while ((i1 <= N - 1) && (index[i1].grade <= 14)) {
+						ind[j1++] = index[i1++];
+					}	
+				} else {
+					Recherche_Dichotomique(index, N, 12, 4, &pos, &trouve);
+					if (trouve) {
+						int i1 = pos - 1;
+						while ((i1 >= 0) && (index[i1].grade == 12)) {
+							ind[j1++] = index[i1--];
+						}
+						i1 = pos;
+						while ((i1 <= N - 1) && (index[i1].grade <= 14)) {
+							ind[j1++] = index[i1++];
+						}
+					} else {
+						Recherche_Dichotomique(index, N, 13, 4, &pos, &trouve);
+						if (trouve) {
+							int i1 = pos - 1;
+							while ((i1 >= 0) && (index[i1].grade == 13)) {
+								ind[j1++] = index[i1--];
+							}
+							i1 = pos;
+							while ((i1 <= N - 1) && (index[i1].grade <= 14)) {
+								ind[j1++] = index[i1++];
+							}	
+						} else {
+							Recherche_Dichotomique(index, N, 14, 4, &pos, &trouve);
+							if (trouve) {
+								int i1 = pos - 1;
+								while ((i1 >= 0) && (index[i1].grade == 14)) {
+									ind[j1++] = index[i1--];
+								}
+								i1 = pos;
+								while ((i1 <= N - 1) && (index[i1].grade == 14)) {
+									ind[j1++] = index[i1++];
+								}
+							}	
+						}
+					}
+				}		
 				break;		  
 			}
 			case 5: {	// Hommes de troupes 
-			
+				Recherche_Dichotomique(index, N, 15, 4, &pos, &trouve);
+				if (trouve) {
+					int i1 = pos - 1;
+					while (i1 >= 0 && index[i1].grade == 15) {
+						ind[j1++] = index[i1--];
+					}
+					i1 = pos;
+					while ((i1 <= N - 1) && (index[i1].grade <= 17)) {
+						ind[j1++] = index[i1++];
+					}	
+				} else {
+					Recherche_Dichotomique(index, N, 16, 4, &pos, &trouve);
+					if (trouve) {
+						int i1 = pos - 1;
+						while (i1 >= 0 && index[i1].grade == 16) {
+							ind[j1++] = index[i1--];
+						}
+						i1 = pos;
+						while ((i1 <= N - 1) && (index[i1].grade <= 17)) {
+							ind[j1++] = index[i1++];
+						}
+					} else {
+						Recherche_Dichotomique(index, N, 17, 4, &pos, &trouve);
+						if (trouve) {
+							int i1 = pos - 1;
+							while (i1 >= 0 && index[i1].grade == 17) {
+								ind[j1++] = index[i1--];
+							}
+							i1 = pos;
+							while ((i1 <= N - 1) && (index[i1].grade == 17)) {
+								ind[j1++] = index[i1++];
+							}	
+						}
+					}
+				}
 				break;		  
 			}
-	
-		
-		
+		}	  
+		*n = j1;
+		ind = (Index*) realloc (ind, j1 * sizeof(Index));
+		Tenreg *personnels = (Tenreg*) malloc (j1 * sizeof(Tenreg));
+		Tri(ind, 0, j1 - 1, 2);
+		for (int k = 0; k < j1; k++) {
+			LireDir(F, ind[k].adr / 85 + 1, &buf);
+			personnels[k] = buf.tab[ind[k].adr % 85];
 		}
-			ind = (Index*) realloc (ind, j1 * sizeof(Index));
-			personnels = (Tenreg*) realloc (personnels, j1 * sizeof(Tenreg));
-			Tri(ind, 0, j1 - 1, 2);
-			for (int k = 0; k < j1; k++) {
-				LireDir(F, ind[k].adr / 85 + 1, &buf);
-				personnels[k] = buf.tab[ind[k].adr % 85];
-			}
-			*n = j1;
-			free(ind);
-			return personnels;
-		}
+		free(ind);
+		return personnels;
 	}
 	fclose(G);
 }
-
-
-
-
-
 
 // Module pour fragmenter le fichier en 6 fichiers selon la region militaire
 void Fragmentation(LObarreF *F) {
@@ -771,7 +1023,6 @@ void Fragmentation(LObarreF *F) {
 	FILE *F4 = fopen("F/F4", "wb+");
 	FILE *F5 = fopen("F/F5", "wb+");
 	FILE *F6 = fopen("F/F6", "wb+");
-
 
 	if ((F1!=NULL) && (F2!=NULL) && (F3!=NULL) && (F4!=NULL) && (F5!=NULL) && (F6!=NULL)) {
 		for (int i = 1; i <= entete(F, 1); i++) {
@@ -844,7 +1095,7 @@ int main () {
 	Suppression("in", 411382);
 
 */
-	Chargement_Initial("in", 25);		//	Afficher_Fichier("in");
+	Chargement_Initial("in", 100);		//	Afficher_Fichier("in");
 //	Afficher_Table_Index();
 	
 	F = Ouvrir("in", 'A');
@@ -862,15 +1113,22 @@ int main () {
 //	Fragmentation(F);
 //	printf("++++++++++++++++++++++\n");
 	Afficher_Fichier(F);
+	int n1 = 0;
+	Tenreg *personnels = Recherche_Categorie_Grade(F, 1, &n1);
+	for (int i = 0; i < n1; i++) {
+		Afficher_Perso(personnels[i], i + 1);
+		printf("\n");
+	}
+	free(personnels);
+
+/*
 	int n1;
 	Tenreg *personnels =	Recherche_Intervale(F, 4, 10, 30, &n1);
-
-	debug("%d", n1);
 	for (int i = 0; i < n1; i++) {
 		Afficher_Perso(personnels[i], i + 1);
 	}
 	free(personnels);
-
+*/
 
 	Fermer(F);
 	printf("\nTime elapsed : %.3f s.\n",1.0 * clock() /CLOCKS_PER_SEC);
