@@ -168,7 +168,6 @@ int main () {
 		}	  
 	}
 
-
 	fclose(F1);
 	fclose(F2);
 	fclose(F3);

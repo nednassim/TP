@@ -447,7 +447,6 @@ void Recherche_Dichotomique(Index *index, int N, int cle, int opt, int *pos, int
 // La recherche dichotomique en utilisant la table d'index
 //void Recherche(char *nom_fichier, int matricule, int *trouve, int *i, int *j) {
 void Recherche(LObarreF *F, int matricule, int *trouve, int *i, int *j) {
-//	F = Ouvrir(nom_fichier, 'A');
 	FILE *G = fopen("index.bin", "rb+");
 	int N = entete(F, 4) - entete(F, 5);
 	int pos = 0;
@@ -463,8 +462,6 @@ void Recherche(LObarreF *F, int matricule, int *trouve, int *i, int *j) {
 		*i = entete(F, 3);		// le bloc queue
 		*j = N  % 85;	// la derniere position
 	}
-
-//	Fermer(F);
 	fclose(G);
 }
 
@@ -528,7 +525,7 @@ void Insertion(LObarreF *F, Tenreg personnel) {
 			free(index);
 			fclose(G);
 		}
-//		Fermer(F);
+		printf("Operation d'insertion terminee avec succes!\n");
 	} else {
 		printf("Ce personnel est existant!\n");
 	}
@@ -578,12 +575,8 @@ void Epuration(LObarreF *F) {
 	if (G != NULL) {
 		int N;
 		fread(&N, sizeof(int), 1, G);
-		debug("%d", N);
 		Index index[N];
 		fread(&index, sizeof(Index), N, G);
-		for (int i = 0; i < N; i++) {
-			debug("%d %d", i,  index[i].cle);
-		}
 		Index *temp = (Index*) malloc (N * sizeof(Index));	
 		int j = 0;
 		for (int i = 0; i < N - 1; i++) {
@@ -603,7 +596,7 @@ void Epuration(LObarreF *F) {
 }
 
 // Module pour modifier la region militaire d'un personnel donnee par son matricule
-void Modifier_Region_Militaire(LObarreF *F, int matricule, int region_militaire) {
+Tenreg Modifier_Region_Militaire(LObarreF *F, int matricule, int region_militaire, int *pos) {
 	int trouve, i, j;
 
 	Recherche(F, matricule, &trouve, &i, &j);
@@ -611,7 +604,6 @@ void Modifier_Region_Militaire(LObarreF *F, int matricule, int region_militaire)
 		LireDir(F, i, &buf);
 		buf.tab[j].region_militaire = region_militaire;
 		EcrireDir(F, i, buf);
-		debug("%d", ((i - 1) * b + j)); 
 		FILE *G = fopen("index.bin", "rb+");
 		if (G != NULL) {
 			Index index;
@@ -622,6 +614,11 @@ void Modifier_Region_Militaire(LObarreF *F, int matricule, int region_militaire)
 			fwrite(&index, sizeof(Index), 1, G);
 			fclose(G);
 		}
+		*pos = (i - 1) * b + j + 1;
+		return buf.tab[j];
+	} else {
+		perror("Ce personnel est inexistant dans le fichier de donnees!\n");
+		exit(0);
 	}
 }
 
@@ -631,9 +628,7 @@ void Suppression(LObarreF *F, int matricule) {
 	Buffer buf1, buf2;
 
 	Recherche(F, matricule, &trouve, &i, &j);
-	debug("%d %d %d", i, j, trouve);
 	if (trouve) {
-//		F = Ouvrir(nom_fichier, 'A');
 		// le bloc concerne est le bloc queue
 		if (i == entete(F, 3)) {
 			LireDir(F, i, &buf);
@@ -682,9 +677,9 @@ void Suppression(LObarreF *F, int matricule) {
 			free(index);
 			fclose(G);
 		}
-		Fermer(F);
 	} else {
-		printf("Ce personnel est non trouve!\n");
+		perror("Ce personnel est inexistant dans le fichier de donnees!\n");
+		exit(0);
 	}
 }
 
@@ -738,31 +733,40 @@ Tenreg *Recherche_Intervale(LObarreF *F, int region_militaire, int age_min, int 
 		Recherche_Dichotomique(index, N, region_militaire, 6, &pos, &trouve);
 		if (trouve) {
 			Index *ind = (Index*) malloc (N * sizeof(Index));
-			Tenreg *personnels = (Tenreg*) malloc (N * sizeof(Tenreg));
 			int i1 = pos - 1;
 			int j1 = 0;
-			while (index[i1].region_militaire == region_militaire) {
+			while ((i1 >= 0) && (index[i1].region_militaire == region_militaire)) {
 				if ((index[i1].age >= age_min) && (index[i1].age <= age_max)) {
-					ind[j1++] = index[i1--];
-				}	
+					ind[j1++] = index[i1];
+				}
+				i1--;	
 			}
 			i1 = pos;
-			while (index[i1].region_militaire == region_militaire) {
+			while ((i1 <= N - 1) && (index[i1].region_militaire == region_militaire)) {
 				if ((index[i1].age >= age_min) && (index[i1].age <= age_max)) {
-					ind[j1++] = index[i1++];
+					ind[j1++] = index[i1];
 				}	
+				i1++;
 			}
-			ind = (Index*) realloc (ind, j1 * sizeof(Index));
-			personnels = (Tenreg*) realloc (personnels, j1 * sizeof(Tenreg));
-			Tri(ind, 0, j1 - 1, 2);
-			for (int k = 0; k < j1; k++) {
-				LireDir(F, ind[k].adr / 85 + 1, &buf);
-				personnels[k] = buf.tab[ind[k].adr % 85];
+			if (j1 == 0) {
+				free(ind);
+				printf("Il n'y a pas de personnels selon ce critere!\n");
+				fclose(G);
+			} else {
+				ind = (Index*) realloc (ind, j1 * sizeof(Index));
+				Tenreg *personnels = (Tenreg*) malloc (j1 * sizeof(Tenreg));
+				Tri(ind, 0, j1 - 1, 2);
+				for (int k = 0; k < j1; k++) {
+					LireDir(F, ind[k].adr / 85 + 1, &buf);
+					personnels[k] = buf.tab[ind[k].adr % 85];
+				}
+				*n = j1;
+				free(ind);
+				fclose(G);
+				return personnels;
 			}
-			*n = j1;
-			free(ind);
-			fclose(G);
-			return personnels;
+		} else {
+			perror("Pas de personnels de cet region militaire! \n");
 		}
 	}
 	fclose(G);
@@ -1067,73 +1071,3 @@ void Fragmentation(LObarreF *F) {
 	fclose(F5);
 	fclose(F6);
 }
-
-
-
-int main () {
-   srand(time(0));
-/*
-	for (int i = 0; i < 1000; i ++) {
-      Tenreg pers = creer_perso();
-		Afficher_Perso(pers, i + 1);
-   }	
-	Entete E;
-	E.nb = 5;
-	E.tete = 1;
-	E.queue = 5;
-	E.cpt_inser = 854;
-	E.cpt_supp = 10403;
-
-	Afficher_Fichier("in");
-
-	int i, j, trouve;
-	Recherche("in", 273126, &trouve, &i, &j);
-	debug("%d %d %d", i, j, trouve);
-
-	Tenreg personnel = creer_perso();
-	Insertion("in", personnel);
-	Suppression("in", 411382);
-
-*/
-	Chargement_Initial("in", 100);		//	Afficher_Fichier("in");
-//	Afficher_Table_Index();
-	
-	F = Ouvrir("in", 'A');
-
-//	Tenreg personnel = creer_perso();
-//	Insertion(F, personnel);
-//	Afficher_Fichier("in");
-//	Afficher_Table_Index();
-//	Suppression(F, 425641 );
-//	Epuration(F);
-//	Modifier_Region_Militaire(F,838283  , 4);
-
-//	Afficher_Table_Index();
-//	Suppression_Force_Armee(F, 5);
-//	Fragmentation(F);
-//	printf("++++++++++++++++++++++\n");
-	Afficher_Fichier(F);
-	int n1 = 0;
-	Tenreg *personnels = Recherche_Categorie_Grade(F, 1, &n1);
-	for (int i = 0; i < n1; i++) {
-		Afficher_Perso(personnels[i], i + 1);
-		printf("\n");
-	}
-	free(personnels);
-
-/*
-	int n1;
-	Tenreg *personnels =	Recherche_Intervale(F, 4, 10, 30, &n1);
-	for (int i = 0; i < n1; i++) {
-		Afficher_Perso(personnels[i], i + 1);
-	}
-	free(personnels);
-*/
-
-	Fermer(F);
-	printf("\nTime elapsed : %.3f s.\n",1.0 * clock() /CLOCKS_PER_SEC);
-   return 0;
-}
-       
-
-
