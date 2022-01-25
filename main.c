@@ -210,7 +210,7 @@ int main () {
 				break;			 
 			}
 			default: {
-				printf("Cette option est indisponible, veuillez reessaier!\n");						
+				printf("Cette option est indisponible, veuillez reessayer!\n");						
 			}
 		}
 		printf("Voullez vous continuer ? (O/N) : ");
