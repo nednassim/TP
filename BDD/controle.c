@@ -35,50 +35,43 @@
 
 typedef struct Force_armee {
 	int num;
-	char nom[46];
+	char nom[52];
 } Force_armee;
 
 typedef struct Grade {
 	int num;
-	char nom[24];
+	char nom[32];
 } Grade;
 
 typedef struct Groupe_sanguin {
 	int num;
-	char nom[3];
+	char nom[8];
 } Groupe_sanguin;
 
 typedef struct Region_militaire {
 	int num;
-	char nom[15];
+	char nom[20];
 } Region_militaire;
 
 typedef struct Wilaya {
 	int num;
-	char nom[18];
+	char nom[23];
 } Wilaya;
 
 
 int main () {
-
 	FILE *F1 = fopen("force_armee.bin", "wb+");
-	FILE *F2 = fopen("grade.bin", "wb+");
 	FILE *F3 = fopen("groupe_sanguin.bin", "wb+");
-	FILE *F4 = fopen("region_militaire.bin", "wb+");
 	FILE *F5 = fopen("wilaya.bin", "wb+");
 
 	int n  = 0;
 	fwrite(&n, sizeof(int), 1, F1);
-	fwrite(&n, sizeof(int), 1, F2);
 	fwrite(&n, sizeof(int), 1, F3);
-	fwrite(&n, sizeof(int), 1, F4);
 	fwrite(&n, sizeof(int), 1, F5);
 
 	fclose(F1);		
-	fclose(F2);		
 	fclose(F3);		
-	fclose(F4);		
-	fclose(F5);		
+	fclose(F3);		
 	// le menu
 	while (1) {
 		system("clear");
@@ -103,10 +96,11 @@ int main () {
 				switch(opt) { 
 					case 1: {	// liste des forces armees disponibles
 						FILE *F1 = fopen("force_armee.bin", "rb"); // ouverture du fichier des forces armees binaire
-						fseek(F1, sizeof(int), SEEK_SET);
+						int n;
+						fread(&n, sizeof(int), 1, F1);
+						debug("%d", n);
 						Force_armee force_armee;
 						while (fread(&force_armee, sizeof(Force_armee), 1, F1) == 1) {
-							fread(&force_armee, sizeof(Force_armee), 1, F1);
 							printf("%d %s\n", force_armee.num, force_armee.nom);	
 						}
 						fclose(F1);
@@ -119,11 +113,11 @@ int main () {
 						n += 1;
 						Force_armee force_armee;
 						printf("Veuillez entrer la nouvelle force armee : ");
-						char nom[46];
+						char nom[52];
 						scanf(" %[^\n]s", nom);		
 						force_armee.num = n;
 						strcpy(force_armee.nom, nom);
-						fseek(F1, 0, SEEK_END);
+						fseek(F1, sizeof(int) + (n - 1) * sizeof(Force_armee), SEEK_SET);
 						fwrite(&force_armee, sizeof(Force_armee), 1, F1);
 						rewind(F1);
 						fwrite(&n, sizeof(int), 1, F1);
@@ -170,7 +164,6 @@ int main () {
 						fseek(F2, sizeof(int), SEEK_SET);
 						Grade grade;
 						while (fread(&grade, sizeof(Grade), 1, F2) == 1) {
-							fread(&grade, sizeof(Grade), 1, F2);
 							printf("%d %s\n", grade.num, grade.nom);	
 						}
 						fclose(F2);
@@ -183,17 +176,16 @@ int main () {
 						n += 1;
 						Grade grade;
 						printf("Veuillez entrer le nouveau grade : ");
-						char nom[24];
+						char nom[32];
 						scanf(" %[^\n]s", nom);		
 						grade.num = n;
 						strcpy(grade.nom, nom);
-						fseek(F2, 0, SEEK_END);
+						fseek(F2, sizeof(int) + (n - 1) * sizeof(Grade), SEEK_SET);
 						fwrite(&grade, sizeof(Grade), 1, F2);
 						rewind(F2);
 						fwrite(&n, sizeof(int), 1, F2);
 						fclose(F2);
-						break;
-					
+						break;					
 					}
 					case 3: {	// suppression d'un grade
 						FILE *F2 = fopen("grade.bin", "rb"); // ouverture du fichier des grades binaire
@@ -224,7 +216,6 @@ int main () {
 				FILE *F3 = fopen("groupe_sanguin.bin", "rb");		// ouverture du fichier des groupes sanguins binaire
 				Groupe_sanguin groupe_sanguin;
 				while (fread(&groupe_sanguin, sizeof(Groupe_sanguin), 1, F3)) {
-					fread(&groupe_sanguin, sizeof(Groupe_sanguin), 1, F3);
 					printf("%d %s\n", groupe_sanguin.num, groupe_sanguin.nom);	
 				}
 				fclose(F3);
@@ -244,7 +235,6 @@ int main () {
 						fseek(F4, sizeof(int), SEEK_SET);
 						Region_militaire region_militaire;
 						while (fread(&region_militaire, sizeof(Region_militaire), 1, F4) == 1) {
-							fread(&region_militaire, sizeof(Region_militaire), 1, F4);
 							printf("%d %s\n", region_militaire.num, region_militaire.nom);	
 						}
 						fclose(F4);
@@ -257,11 +247,11 @@ int main () {
 						n += 1;
 						Region_militaire region_militaire;
 						printf("Veuillez entrer la nouvelle region militaire : ");
-						char nom[15];
+						char nom[20];
 						scanf(" %[^\n]s", nom);		
 						region_militaire.num = n;
 						strcpy(region_militaire.nom, nom);
-						fseek(F4, 0, SEEK_END);
+						fseek(F4, sizeof(int) + (n - 1) * sizeof(Region_militaire), SEEK_SET);
 						fwrite(&region_militaire, sizeof(Region_militaire), 1, F4);
 						rewind(F4);
 						fwrite(&n, sizeof(int), 1, F4);
@@ -307,7 +297,6 @@ int main () {
 						fseek(F5, sizeof(int), SEEK_SET);
 						Wilaya wilaya;
 						while (fread(&wilaya, sizeof(Wilaya), 1, F5) == 1) {
-							fread(&wilaya, sizeof(Wilaya), 1, F5);
 							printf("%d %s\n", wilaya.num, wilaya.nom);	
 						}
 						fclose(F5);
@@ -320,11 +309,11 @@ int main () {
 						n += 1;
 						Wilaya wilaya;
 						printf("Veuillez entrer la nouvelle wilaya : ");
-						char nom[18];
+						char nom[23];
 						scanf(" %[^\n]s", nom);		
 						wilaya.num = n;
 						strcpy(wilaya.nom, nom);
-						fseek(F5, 0, SEEK_END);
+						fseek(F5, sizeof(int) + (n - 1) * sizeof(Region_militaire), SEEK_SET);
 						fwrite(&wilaya, sizeof(Wilaya), 1, F5);
 						rewind(F5);
 						fwrite(&n, sizeof(int), 1, F5);
