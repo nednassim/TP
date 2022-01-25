@@ -60,11 +60,25 @@ typedef struct Wilaya {
 
 
 int main () {
-	FILE *F = fopen("force_armee.bin", "wb+");
-	int n  = 0;
-	fwrite(&n, sizeof(int), 1, F);
-	fclose(F);		
 
+	FILE *F1 = fopen("force_armee.bin", "wb+");
+	FILE *F2 = fopen("grade.bin", "wb+");
+	FILE *F3 = fopen("groupe_sanguin.bin", "wb+");
+	FILE *F4 = fopen("region_militaire.bin", "wb+");
+	FILE *F5 = fopen("wilaya.bin", "wb+");
+
+	int n  = 0;
+	fwrite(&n, sizeof(int), 1, F1);
+	fwrite(&n, sizeof(int), 1, F2);
+	fwrite(&n, sizeof(int), 1, F3);
+	fwrite(&n, sizeof(int), 1, F4);
+	fwrite(&n, sizeof(int), 1, F5);
+
+	fclose(F1);		
+	fclose(F2);		
+	fclose(F3);		
+	fclose(F4);		
+	fclose(F5);		
 	// le menu
 	while (1) {
 		system("clear");
