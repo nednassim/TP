@@ -1,12 +1,3 @@
-#pragma GCC optimize("-Ofast","-funroll-all-loops","-ffast-math")
-#pragma GCC optimize("-fno-math-errno")
-#pragma GCC optimize("-funsafe-math-optimizations")
-#pragma GCC optimize("-freciprocal-math")
-#pragma GCC optimize("-fno-trapping-math")
-#pragma GCC optimize("-ffinite-math-only")
-#pragma GCC optimize("-fno-stack-protector")
-#pragma GCC target("sse4","avx2")
-#include <immintrin.h>
 #include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -55,23 +46,11 @@ typedef struct Region_militaire {
 
 typedef struct Wilaya {
 	int num;
-	char nom[23];
+	char nom[25];
 } Wilaya;
 
 
 int main () {
-	FILE *F1 = fopen("force_armee.bin", "wb+");
-	FILE *F3 = fopen("groupe_sanguin.bin", "wb+");
-	FILE *F5 = fopen("wilaya.bin", "wb+");
-
-	int n  = 0;
-	fwrite(&n, sizeof(int), 1, F1);
-	fwrite(&n, sizeof(int), 1, F3);
-	fwrite(&n, sizeof(int), 1, F5);
-
-	fclose(F1);		
-	fclose(F3);		
-	fclose(F3);		
 	// le menu
 	while (1) {
 		system("clear");
@@ -98,7 +77,6 @@ int main () {
 						FILE *F1 = fopen("force_armee.bin", "rb"); // ouverture du fichier des forces armees binaire
 						int n;
 						fread(&n, sizeof(int), 1, F1);
-						debug("%d", n);
 						Force_armee force_armee;
 						while (fread(&force_armee, sizeof(Force_armee), 1, F1) == 1) {
 							printf("%d %s\n", force_armee.num, force_armee.nom);	
@@ -309,11 +287,11 @@ int main () {
 						n += 1;
 						Wilaya wilaya;
 						printf("Veuillez entrer la nouvelle wilaya : ");
-						char nom[23];
+						char nom[25];
 						scanf(" %[^\n]s", nom);		
 						wilaya.num = n;
 						strcpy(wilaya.nom, nom);
-						fseek(F5, sizeof(int) + (n - 1) * sizeof(Region_militaire), SEEK_SET);
+						fseek(F5, sizeof(int) + (n - 1) * sizeof(Wilaya), SEEK_SET);
 						fwrite(&wilaya, sizeof(Wilaya), 1, F5);
 						rewind(F5);
 						fwrite(&n, sizeof(int), 1, F5);
