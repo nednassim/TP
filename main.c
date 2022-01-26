@@ -72,8 +72,7 @@ int main () {
 				system("clear");
 				debut();
 				F = Ouvrir("PERSONNEL-ANP_DZ.bin", 'A');
-				Tenreg personnel = creer_perso();
-				Insertion(F, personnel);
+				Insertion(F);
 				printf("Operation d'insertion du nouvel personnel erminee avec succes!\n");
 				printf("Voulez vous afficher le fichier de donnees PERSONNEL-ANP_DZ.bin? (O/N) ");
 				char opt1;

@@ -52,16 +52,6 @@ typedef struct Wilaya {
 
 int main () {
 
-	FILE *F6 = fopen("groupe_sanguin.bin", "wb+");
-
-	int n  = 8;
-	char nom[8];
-	Groupe_sanguin groupe;
-	groupe.num = 1;
-	groupe.nom = 
-	fwrite(&n, sizeof(int), 1, F6);
-
-	fclose(F6);		
 	// le menu
 	while (1) {
 		system("clear");

@@ -81,29 +81,29 @@ char *rand_date() {
 	return date;
 }
 // fonction pour generer la wilaya de naissance
-int rand_wilaya() { return (rand() % 58 + 1);}
+int rand_wilaya(int n) { return (rand() % n + 1);}
 // fonction pour generer le groupe sanguin
 int rand_groupe_sanguin() { return (rand() % 8 + 1);}
 // fonction pour generer le grade
-int rand_grade() { return (rand() % 17 + 1);}
+int rand_grade(int n) { return (rand() % n + 1);}
 // fonction pour genererla force armee
-int rand_force_armee() { return (rand() % 8 + 1);}
+int rand_force_armee(int n) { return (rand() % n + 1);}
 // fonction pour generer la region militaire
-int rand_region_militaire () { return (rand() % 6 + 1);}
+int rand_region_militaire (int n) { return (rand() % n + 1);}
 
 // fonction pour creer un personnel militaire
-Tenreg creer_perso() {
+Tenreg creer_perso(int force_armee, int grade, int region_militaire, int wilaya) {
 	Tenreg personnel;
 	memset(&personnel, 0, sizeof(Tenreg));
 	personnel.matricule = rand_matricule();
 	strcpy(personnel.nom, rand_nom());
 	strcpy(personnel.prenom, rand_prenom());
 	strcpy(personnel.date_naissance, rand_date());
-	personnel.wilaya_naissance = rand_wilaya();
+	personnel.wilaya_naissance = rand_wilaya(wilaya);
 	personnel.groupe_sanguin = rand_groupe_sanguin();
-	personnel.grade = rand_grade();
-	personnel.force_armee = rand_force_armee();
-	personnel.region_militaire = rand_region_militaire();
+	personnel.grade = rand_grade(grade);
+	personnel.force_armee = rand_force_armee(force_armee);
+	personnel.region_militaire = rand_region_militaire(region_militaire);
 	return personnel;
 }
 
@@ -249,6 +249,22 @@ void Tri(Index *arr, int l, int r, int opt) {
 
 // Module pour chargement initial du fichier LObarreF 
 void Chargement_Initial(char *nom_fichier, int N) {
+	FILE *F1 = fopen("BDD/force_armee.bin", "rb");
+	FILE *F2 = fopen("BDD/grade.bin", "rb");
+	FILE *F3 = fopen("BDD/region_militaire.bin", "rb");
+	FILE *F4 = fopen("BDD/wilaya.bin", "rb");
+
+	int force_armee, grade, region_militaire, wilaya;
+	fread(&force_armee, sizeof(int), 1, F1);
+	fread(&grade, sizeof(int), 1, F2);
+	fread(&region_militaire, sizeof(int), 1, F3);
+	fread(&wilaya, sizeof(int), 1, F4);
+
+	fclose(F1);
+	fclose(F2);
+	fclose(F3);
+	fclose(F4);
+
 	Tenreg personnel;
 	Index index[N];
 	int i, j;
@@ -261,7 +277,7 @@ void Chargement_Initial(char *nom_fichier, int N) {
 	for (int k = 0; k < N; k++) {
 		memset(&personnel, 0, sizeof(Tenreg));
 		memset(&index[k], 0, sizeof(Index));
-		personnel = creer_perso();
+		personnel = creer_perso(force_armee, grade, region_militaire, wilaya);
 		index[k].cle = personnel.matricule;
 		index[k].adr = k;
 		index[k].grade = personnel.grade;
@@ -467,12 +483,28 @@ void Recherche(LObarreF *F, int matricule, int *trouve, int *i, int *j) {
 
 // Module d'insertion dans un fichier LObarreF
 //void Insertion(char *nom_fichier, Tenreg personnel) {
-void Insertion(LObarreF *F, Tenreg personnel) {
+void Insertion(LObarreF *F)  {
 	int trouve, i, j;
+	FILE *F1 = fopen("BDD/force_armee.bin", "rb");
+	FILE *F2 = fopen("BDD/grade.bin", "rb");
+	FILE *F3 = fopen("BDD/region_militaire.bin", "rb");
+	FILE *F4 = fopen("BDD/wilaya.bin", "rb");
+
+	int force_armee, grade, region_militaire, wilaya;
+	fread(&force_armee, sizeof(int), 1, F1);
+	fread(&grade, sizeof(int), 1, F2);
+	fread(&region_militaire, sizeof(int), 1, F3);
+	fread(&wilaya, sizeof(int), 1, F4);
+
+	fclose(F1);
+	fclose(F2);
+	fclose(F3);
+	fclose(F4);
+	Tenreg personnel = creer_perso(force_armee, grade, region_militaire, wilaya);
 
 	Recherche(F, personnel.matricule, &trouve, &i, &j);
 	if (!trouve) {		// le personnel est inexistant
-	//	F = Ouvrir(nom_fichier, 'A');
+
 		if (!entete(F, 1)) {		// fichier vide
 			// insertion en premier bloc en premiere position
 			buf.tab[0] = personnel;
