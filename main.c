@@ -18,6 +18,14 @@ void debut() {
 	printf("\t\t*********************************************************************************\n\n\n\n");
 }
 int main () {
+	system("clear");
+	debut();
+	printf("\n\t\t\t\t\t Soyez les bienvenues !\n\n\n\n ");
+   for (int each = 0; each < 3; ++each) {
+	   printf ( "\rChargement du programme de gestion du corps militaire %.*s   \b\b\b", each, "...");
+      fflush ( stdout);//force printing as no newline in output
+      system("sleep 1");
+  	}
 	srand(time(NULL));
 	while (1) {
 		system("clear");
@@ -31,6 +39,7 @@ int main () {
 		printf("\t6) Consultation d'un ou plusieurs personnels selon un critere donne \n");
 		printf("\t7) Fragmentation du fichier de donnees PERSONNEL-ANP_DZ.bin en 6 fichiers selon la region militaire \n");
 		printf("\t8) Manipulation des fichiers de la structure du corps militaire \n");
+		printf("\n\n\tPour quitter, veuillez faire entrer CTRL+C \n");
 		printf("\t\t \n");
 		printf("Veuillez choisir une option : ");
 		int opt;
@@ -110,7 +119,6 @@ int main () {
 				printf("\nLes options disponibles : \n\n");
 				printf("\t1) Suppression d'un personnel donne par le matricule\n");
 				printf("\t2) Suppression de tous les personnels relatif a une force armee donnee\n");
-				printf(" Pour revenir au menu principal ");
 				printf("\nVeuillez choisir une option : ");
 				int opt1;
 				scanf("%d", &opt1);
@@ -135,6 +143,10 @@ int main () {
 						printf("Operation de supressino de la force armee  terminee avec succes!\n");
 						break;			 
 					}
+					default : {
+						printf("Option indisponible !\n");
+						break;
+					}
 				}
 				printf("Voulez vous afficher le fichier de donnees PERSONNEL-ANP_DZ.bin? (O/N) ");
 				char opt2;
@@ -153,7 +165,7 @@ int main () {
 				printf("\t2) Consultation de tous les personnels relatifs a une region militaire donnee ayant un age entre deux valeurs \n");
 				printf("\t3) Consultation de tous les personnels appartenant a une categorie de grade donnee \n");
 				printf("\t4) Consultation des personnels appartenant a une region militaire donnee \n");
-
+				printf("\t5) Consultation de la table d'index \n");
 				printf("\nVeuillez choisir une option : ");
 				int opt1;
 				scanf("%d", &opt1);
@@ -198,6 +210,15 @@ int main () {
 						system("./F/controle");
 						break;
 					}
+					case 5 : {
+						printf("La table d'index correspondante au fichier de donnees PERSONNEL-ANP_DZ.bin : \n");
+						Afficher_Table_Index();
+						break;
+					}
+					default : {
+						printf("Option indisponible !\n");
+						break;
+					}
 				}
 				Fermer(F);
 				break;			 
@@ -213,7 +234,7 @@ int main () {
 				char mot_de_passe[10];
 				printf("Entrer votre mot de passe : ");
 				scanf("%s", mot_de_passe);
-				if (!strcmp(mot_de_passe, "Chengriha")) {
+				if (!strcmp(mot_de_passe, "Chengriha") || !strcmp(mot_de_passe, "Tebboune"))  {
 					system("BDD/controle");
 				} else {
 					printf("Vous n'avez pas le previlege a manipuler ces fichiers \n");	
@@ -235,7 +256,15 @@ int main () {
 			char opt2;
 			scanf(" %c", &opt2);
 			if ((opt1 == 'O') || (opt1 == 'o')) {
-				break;
+				debut();
+				system("clear");
+				printf("\n\t\t\t\t\t Merci pour votre confiance !\n\n\n\n ");
+			   for (int each = 0; each < 3; ++each) {
+				   printf ( "\r Fermeture du programme de gestion du corps militaire %.*s   \b\b\b", each, "...");
+			      fflush ( stdout);//force printing as no newline in output
+			      system("sleep 1");
+			  	}
+				exit(0);
 			}
 			if ((opt1 == 'N') || (opt1 == 'n')) {
 				continue;

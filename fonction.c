@@ -744,7 +744,10 @@ void Suppression_Force_Armee(LObarreF *F, int force_armee) {
 			fwrite(&N, sizeof(int),  1 , G);			// Mise a jour du nombre de personnels
 			Tri(index, 0, N - 1, 1);					// Tri de la table d'index selon les matricules
 			fwrite(&index, sizeof(Index), N, G);	// Mise a jour de la table d'index dans le fichier d'index
+		} else {
+			printf("Cette force armee est indisponible !\n");
 		}
+		
 	}
 	fclose(G);		// Fermeture du fichier d'index
 }
@@ -820,11 +823,12 @@ Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n) {
 		Tri(index, 0, N - 1, 4);					// Tri de la table d'index selon grade
 		
 		Index *ind = (Index*) malloc (N * sizeof(Index));
-		int pos = 1, trouve = 0, j1 = 0;
+		int pos = 1, trouve = 0, existe = 0, j1 = 0;
 		switch(categorie) {
 			case 1: {	// Officiers-generaux
 				Recherche_Dichotomique(index, N, 1, 4, &pos, &trouve);
 				if (trouve) {
+					existe = 1;
 					int i1 = pos - 1;
 					while ((i1 >= 0) && (index[i1].grade == 1)) {
 						ind[j1++] = index[i1--];
@@ -836,6 +840,7 @@ Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n) {
 				} else {
 					Recherche_Dichotomique(index, N, 2, 4, &pos, &trouve);
 					if (trouve) {
+						existe = 1;
 						int i1 = pos - 1;
 						while ((i1 >= 0) && (index[i1].grade == 2)) {
 							ind[j1++] = index[i1--];
@@ -847,6 +852,7 @@ Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n) {
 					} else {
 						Recherche_Dichotomique(index, N, 3, 4, &pos, &trouve);
 						if (trouve) {
+							existe = 1;
 							int i1 = pos - 1;
 							while ((i1 >= 0) && (index[i1].grade == 3)) {
 								ind[j1++] = index[i1--];
@@ -863,6 +869,7 @@ Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n) {
 			case 2: {	// Officiers-superieurs
 				Recherche_Dichotomique(index, N, 4, 4, &pos, &trouve);
 				if (trouve) {
+					existe = 1;
 					int i1 = pos - 1;
 					while ((i1 >= 0) && (index[i1].grade == 4)) {
 						ind[j1++] = index[i1--];
@@ -874,6 +881,7 @@ Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n) {
 				} else {
 					Recherche_Dichotomique(index, N, 5, 4, &pos, &trouve);
 					if (trouve) {
+						existe = 1;
 						int i1 = pos - 1;
 						while ((i1 >= 0) && (index[i1].grade == 5)) {
 							ind[j1++] = index[i1--];
@@ -885,6 +893,7 @@ Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n) {
 					} else {
 						Recherche_Dichotomique(index, N, 6, 4, &pos, &trouve);
 						if (trouve) {
+							existe = 1;
 							int i1 = pos - 1;
 							while ((i1 >= 0) && (index[i1].grade == 6)) {
 								ind[j1++] = index[i1--];
@@ -912,6 +921,7 @@ Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n) {
 				} else {
 					Recherche_Dichotomique(index, N, 8, 4, &pos, &trouve);
 					if (trouve) {
+						existe = 1;
 						int i1 = pos - 1;
 						while ((i1 >= 0) && (index[i1].grade == 8)) {
 							ind[j1++] = index[i1--];
@@ -923,6 +933,7 @@ Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n) {
 					} else {
 						Recherche_Dichotomique(index, N, 9, 4, &pos, &trouve);
 						if (trouve) {
+							existe = 1;
 							int i1 = pos - 1;
 							while ((i1 >= 0) && (index[i1].grade == 9)) {
 								ind[j1++] = index[i1--];
@@ -934,6 +945,7 @@ Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n) {
 						} else {
 							Recherche_Dichotomique(index, N, 10, 4, &pos, &trouve);
 							if (trouve) {
+								existe = 1;
 								int i1 = pos - 1;
 								while ((i1 >= 0) && (index[i1].grade == 10)) {
 									ind[j1++] = index[i1--];
@@ -951,6 +963,7 @@ Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n) {
 			case 4: {	// Sous-officiers 
 				Recherche_Dichotomique(index, N, 11, 4, &pos, &trouve);
 				if (trouve) {
+					existe = 1;
 					int i1 = pos - 1;
 					while ((i1 >= 0) && (index[i1].grade == 11)) {
 						ind[j1++] = index[i1--];
@@ -962,6 +975,7 @@ Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n) {
 				} else {
 					Recherche_Dichotomique(index, N, 12, 4, &pos, &trouve);
 					if (trouve) {
+						existe = 1;
 						int i1 = pos - 1;
 						while ((i1 >= 0) && (index[i1].grade == 12)) {
 							ind[j1++] = index[i1--];
@@ -973,6 +987,7 @@ Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n) {
 					} else {
 						Recherche_Dichotomique(index, N, 13, 4, &pos, &trouve);
 						if (trouve) {
+							existe = 1;
 							int i1 = pos - 1;
 							while ((i1 >= 0) && (index[i1].grade == 13)) {
 								ind[j1++] = index[i1--];
@@ -984,6 +999,7 @@ Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n) {
 						} else {
 							Recherche_Dichotomique(index, N, 14, 4, &pos, &trouve);
 							if (trouve) {
+								existe = 1;
 								int i1 = pos - 1;
 								while ((i1 >= 0) && (index[i1].grade == 14)) {
 									ind[j1++] = index[i1--];
@@ -1001,6 +1017,7 @@ Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n) {
 			case 5: {	// Hommes de troupes 
 				Recherche_Dichotomique(index, N, 15, 4, &pos, &trouve);
 				if (trouve) {
+					existe = 1;
 					int i1 = pos - 1;
 					while (i1 >= 0 && index[i1].grade == 15) {
 						ind[j1++] = index[i1--];
@@ -1012,6 +1029,7 @@ Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n) {
 				} else {
 					Recherche_Dichotomique(index, N, 16, 4, &pos, &trouve);
 					if (trouve) {
+						existe = 1;
 						int i1 = pos - 1;
 						while (i1 >= 0 && index[i1].grade == 16) {
 							ind[j1++] = index[i1--];
@@ -1023,6 +1041,7 @@ Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n) {
 					} else {
 						Recherche_Dichotomique(index, N, 17, 4, &pos, &trouve);
 						if (trouve) {
+							existe = 1;
 							int i1 = pos - 1;
 							while (i1 >= 0 && index[i1].grade == 17) {
 								ind[j1++] = index[i1--];
@@ -1037,7 +1056,7 @@ Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n) {
 				break;		  
 			}
 		}	 
-	   if (trouve) {	
+	   if (existe) {	
 			*n = j1;
 			ind = (Index*) realloc (ind, j1 * sizeof(Index));
 			Tenreg *personnels = (Tenreg*) malloc (j1 * sizeof(Tenreg));

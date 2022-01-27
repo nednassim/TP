@@ -1,18 +1,18 @@
 									
-				*********************************************************************************
-				*																										  *
-				*						Ecole Nationale Superieure d'Informatique (ESI)		  			  *
-				*																										  *
-				*				 							 TP SFSD													  *
-				*					Structure simple de fichiers - Methode: LObarreF					  *
-				*																										  *
-				*								Supervise par : Dr Kermi Adel									  *
-				*																										  *
-				*			  						NEDJAR Nassim	groupe 4										  *
-				*								Annee Universitaire : 2021/2022								  *
-				*																										  *
-				*																									  	  *
-				*********************************************************************************
+							*********************************************************************************
+							*																										  																				  *
+							*										Ecole Nationale Superieure d'Informatique (ESI)		  			  			  *
+							*																										  																				  *
+							*				 																 TP SFSD													  								  *
+							*										Structure simple de fichiers - Methode: LObarreF					  		  *
+							*																											  																			  *
+							*														Supervise par : Dr Kermi Adel									  						  *
+							*																										  																				  *
+							*			  												NEDJAR Nassim	groupe 4										  						  *
+							*														Annee Universitaire : 2021/2022								  						  *
+							*																																		  												  *
+							*																									  	  																				  *
+							*********************************************************************************
 
 
 
@@ -43,7 +43,8 @@ Creation du fichier de donnees PERSONNEL-ANP_DZ.bin :
 		- On boucle jusqu'a N , a chaque iteration :
 			|	
 			|__ - On cree un personnel aleatoirement et on l'ajoute a buffer
-			|   - Si le buffer est plein, on l'ecrit et on alloue un nouveau bloc, sinon on continue
+			|__ - Si le buffer est plein, on l'ecrit et on alloue un nouveau bloc, sinon on continue
+			|
 			|__ - On ajoute ce personnel a la table d'index
 
 		- On met a jour l'entete
@@ -120,29 +121,160 @@ void Suppression1(LObarreF *F, int i, int j)
 	
 // Module d'epuration dans un fichier LObarreF
 void Epuration(LObarreF *F) 
+	Les parametres sont :
+		+ F : fichier de type LObarreF
+
 	- On ouvre le fichier d'index
 	- On charge la table d'index dans la MC
 	- On alloue une table d'index temporaire
 	- On itere jusqu'a N :
 	|
 	|__ - Si deux index consecutive ont la meme matricule, on supprime le deuxieme
-		 - Sinon, on ajoute l'index a la table temporaire
+	|__ - Sinon, on ajoute l'index a la table temporaire
 
 	- On ecrit la table temporaire (qui ne contient pas de duplique) dans le fichier d'index
 	- On ferme le fichier d'index
 
 
 
+// Module pour modifier la region militaire d'un personnel donnee par son matricule
+Tenreg Modifier_Region_Militaire(LObarreF *F, int matricule, int region_militaire, int *pos) 
+	Les parametres sont :
+		+ F : fichier de type LObarreF
+		+ matricule : la matricule du personnel concerne
+		+ region_militaire : la nouvelle region militaire
+		+ pos : la position du personnel dans la table d'index
+
+	- On recherche si le personnel existe deja dans le fichier de donnees
+	- Si le personnel est trouve :
+		- On modifie la region militaire du personnel et on met a jour le bloc concerne
+		- On ouvre le fichier d'index
+	   - On se positionne sur l'index correspondant a ce personnel
+		- On change sa region militaire
+		- On ferme le fichier d'index
+		- On retourne le personnel (pour faciliter son affichage)
 
 
 
+// Module de suppression physique dans un fichier LObarreF
+void Suppression(LObarreF *F, int matricule)
+	Les parametres sont :
+		+ F : fichier de type LObarreF
+		+ matricule : la matricule du personnel concerne
+		- Si le personnel est trouve :
+			- On ecrase le personnel par le dernier personnel
+			- On met a jour le bloc et l'entete
+			- On ouvre le fichier d'index
+			- On charge la table d'index dans la MC
+			- On trie la table d'index selon les adresses
+			- On ecrase l'index du personnel par l'index du dernier personnel
+			- On met a jour le fichier d'index
+			- On ferme le fichier d'index
 
 
 
+// Module pour supprimer les personnels d'une force armee
+void Suppression_Force_Armee(LObarreF *F, int force_armee) 		
+	Les parametres sont :
+		+ F : fichier de type LObarreF
+		+ force_armee : la force armee concernee
+
+	- On ouvre le fichier d'index
+	- On charge la table d'index dans la MC
+	- On trie la table d'index selon la force armee
+	- On recherche cette force armee dans la table d'index
+	- Si la force armee est trouvee :
+		- Tant que le personnel appartient a cette force armee
+		|
+		|__ - On supprime le personnel du fichier de donnees
+		|__ - On continue a iterer au precedent 
+		|	
+		|__ - On supprime le personnel du fichier de donnees
+		|__ - On continue a iterer au prochain
+		 
+	- On met a jour le fichier d'index
+	- On ferme le fichier d'index
 
 
 
+// Module pour consulter tous les personnels d'une region donnee ayant l'age dans l'intervalle donne
+Tenreg *Recherche_Intervale(LObarreF *F, int region_militaire, int age_min, int age_max, int *n)
+	Les parametres sont :
+		+ F : fichier de type LObarreF
+		+ region_militaire : la region militaire concernee
+		+ age_min : la borne inferieure de l'intervalle d'age
+		+ age_max : la borne superieure de l'intervalle d'age
+		+ n : le nombre de personnels concernes (passage par variable)
+		
+	- On ouvre le fichier d'index
+	- On charge la table d'index dans la MC
+	- On trie la table d'index selon la region militaire
+	- On alloue une table d'index temporaire
+	- Si la region militaire est trouvee :	
+		- Tant que le personnel appartient a cette force armee
+		|
+		|__ - On ajoute l'index du personnel a la table d'index temporaire
+		|__ - On continue a iterer au precedent 
+		|
+		|__ - On ajoute l'index du personnel a la table d'index temporaire
+		|__ - On continue a iterer au prochain
+	
+	- On alloue une table de personnels
+	- On itere dans le tableau d'index temporaire:
+	|__  - On lit le bloc concerne
+		  - On ajoute le personnel a la table de personnels
 
+	- On ferme le fichier d'index 
+	- On retourne la table de personnels
+
+
+
+// Module pour consulter tous les personnels appartenant a une categorie de grade donnee
+Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n)  
+	 
+	Les categories de grade disponibles :
+	1 : Officiers-generaux : 1 : Général de corps d’armée, 2 : Général-Major, 3 : Général [1, 2, 3]
+   2 : Officiers-superieurs : 4 : Colonel, 5: Lieutenant-colonel, 6 : Commandant [4, 5, 6]
+   3 : Officiers : 7 : Capitaine, 8 :  Lieutenant, 9 : Sous-lieutenant, 10 : Aspirant [7, 8, 9, 10]
+	4 : Sous-officiers : 11 : Adjudant-chef, 12 : Adjudant, 13 : Sergent-chef, 14 : Sergent [11, 12, 13, 14]
+   5 : Hommes de troupes : 15 : Caporal-chef, 16 : Caporal, 17 : Djoundi [15, 16, 17]
+
+	Les parametres sont :
+		+ F : fichier de type LObarreF
+		+ categorie : la categorie de grade
+		+ n : le nombre de personels concernes (passage par variable)
+
+
+	- On ouvre le fichier d'index
+	- On charge la table d'index dans la MC
+	- On trie la table d'index selon le grade
+	- On alloue une table d'index temporaire
+	- Si la categorie est :
+		1 : on cherche l'un des grades 1, 2, 3, continuer a iterer tant qu'on a pas recuperer tous les personnels concernes
+		2 : on cherche l'un des grades 4, 5, 6, continuer a iterer tant qu'on a pas recuperer tous les personnels concernes
+		3 : on cherche l'un des grades 7, 8, 9, 10 continuer a iterer tant qu'on a pas recuperer tous les personnels concernes
+		4 : on cherche l'un des grades 11, 12, 13, 14 continuer a iterer tant qu'on a pas recuperer tous les personnels concernes
+		5 : on cherche l'un des grades 15, 16, 17, continuer a iterer tant qu'on a pas recuperer tous les personnels concernes
+
+	- On alloue une table de personnels
+	- On itere dans le tableau d'index temporaire:
+	|__  - On lit le bloc concerne
+		  - On ajoute le personnel a la table de personnels
+
+	- On ferme le fichier d'index 
+	- On retourne la table de personnels
+
+
+
+// Module pour fragmenter le fichier en 6 fichiers selon la region militaire
+void Fragmentation(LObarreF *F)
+	Les parametres sont :
+		+ F : fichier de type LObarreF
+	- On ouvre les fichiers F1, F2, F3, F4, F5 et F6 correspondant a la region militaire 1, 2, 3, 4, 5 et 6 respectivement
+	- On itere jusqu'a N (le nombre de personnels dans le fichier de donnees) :
+	|__ Si le personnel appartient a une region i, il sera ajouter au fichier Fi (i = (1, 2 ,3 4, 5, 6))
+
+	- On ferme les fichiers F1, F2, F3, F4, F5 et F6 correspondant a la region militaire 1, 2, 3, 4, 5 et 6 respectivement
 
 
 

@@ -82,7 +82,7 @@ void Aff_entete(LObarreF *F,int i , int valeur);  	 // procedure pour modifier l
 LObarreF *Ouvrir(char nom_physique[20], char mode); // fonction pour ouvrir un fichier LObarreF
 void Fermer(LObarreF *F);   							  	 // fonction pour fermer un fichier LObarreF
 void Alloc_Bloc(LObarreF *F); 					  	 // procedure pour allouer un bloc dans un fichier LObarreF
-//void Chargement_Initial(char *nom_fichier, LObarreF *F, int N); 	 // procedure pour creer un fichier LObarreF
+void Chargement_Initial(char *nom_fichier, int N); 	 // procedure pour creer un fichier LObarreF
 
 /* Les modules d'affichage */
 void Afficher_Bloc(LObarreF *F,int i);    // procedure pour afficher un bloc dans un fichier LObarreF

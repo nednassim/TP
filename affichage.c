@@ -153,45 +153,34 @@ void Afficher_Fichier(LObarreF *F) {
    printf("%s\n", str1);
    LireDir(F, i, &buf);
 	int j = 1;
-   for (int i = 0; i < buf.nb; i++) {
-	 	int len = 62 - ((i / 10) ? 2 : 1) - 14;
-		printf("*| Personnel : %d  |%*s\n", j++, len, "|*");
-		printf("*| ---------------%*s\n", 48, "|*");
-		printf("*| Matricule : %d %*s \n", buf.tab[i].matricule, 44, "|*");
-		int len1 = 62 - strlen(buf.tab[i].nom) - 6;
-		printf("*| Nom : %s %*s\n", buf.tab[i].nom, len1, "|*");
-		int len2 = 62 - strlen(buf.tab[i].prenom) - 9;
-		printf("*| Prenom : %s %*s\n", buf.tab[i].prenom, len2, "|*");
-		printf("*| Date de naissance : %s %*s\n", buf.tab[i].date_naissance, 32, "|*");
-		int len3 = 62 - strlen(wilayas[buf.tab[i].wilaya_naissance - 1]) - 22;
-		printf("*| Wilaya de naissance : %s %*s\n", wilayas[buf.tab[i].wilaya_naissance - 1], len3, "|*");
-		int len4 = 62 - strlen(groupe_sanguins[buf.tab[i].groupe_sanguin - 1]) - 17;
-		printf("*| Groupe sanguin : %s %*s\n", groupe_sanguins[buf.tab[i].groupe_sanguin - 1], len4, "|*");
-		int len5 = 62 - strlen(grades[buf.tab[i].grade - 1]) - 8;
-		printf("*| Grade : %s %*s\n", grades[buf.tab[i].grade - 1], len5, "|*");
-		int len6 = 62 - strlen(force_armees[buf.tab[i].force_armee - 1]) - 14;
-		printf("*| Force armee : %s %*s\n", force_armees[buf.tab[i].force_armee - 1], len6, "|*");
-		int len7 = 62 - strlen(region_militaires[buf.tab[i].region_militaire - 1]) - 19;
-		printf("*| Region militaire : %s %*s\n", region_militaires[buf.tab[i].region_militaire - 1], len7, "|*");
-		printf("%s\n", str1);
-   }
-   printf("%s\n", str);
-   printf("\t\t\t *| Bloc : %d  |*\n", i );
-   printf("\t\t\t * * * * * * * *\n");
-
-//	Afficher_Bloc(F, 1);
-/*
-   for (int i = 0; i < F->entete.nb; i++) {
-      Afficher_Bloc(F, i + 1);
-      printf("\t\t      *\n");
-      printf("\t\t      *\n");
-      printf("\t\t    * * *\n");
-      printf("\t\t     ***\n");
-      printf("\t\t      *\n");
+	while (j <= 3 && j <= entete(F, 1)) {
+		for (int i = 0; i < buf.nb; i++) {
+			int len = 62 - ((i / 10) ? 2 : 1) - 14;
+			printf("*| Personnel : %d  |%*s\n", j++, len, "|*");
+			printf("*| ---------------%*s\n", 48, "|*");
+			printf("*| Matricule : %d %*s \n", buf.tab[i].matricule, 44, "|*");
+			int len1 = 62 - strlen(buf.tab[i].nom) - 6;
+			printf("*| Nom : %s %*s\n", buf.tab[i].nom, len1, "|*");
+			int len2 = 62 - strlen(buf.tab[i].prenom) - 9;
+			printf("*| Prenom : %s %*s\n", buf.tab[i].prenom, len2, "|*");
+			printf("*| Date de naissance : %s %*s\n", buf.tab[i].date_naissance, 32, "|*");
+			int len3 = 62 - strlen(wilayas[buf.tab[i].wilaya_naissance - 1]) - 22;
+			printf("*| Wilaya de naissance : %s %*s\n", wilayas[buf.tab[i].wilaya_naissance - 1], len3, "|*");
+			int len4 = 62 - strlen(groupe_sanguins[buf.tab[i].groupe_sanguin - 1]) - 17;
+			printf("*| Groupe sanguin : %s %*s\n", groupe_sanguins[buf.tab[i].groupe_sanguin - 1], len4, "|*");
+			int len5 = 62 - strlen(grades[buf.tab[i].grade - 1]) - 8;
+			printf("*| Grade : %s %*s\n", grades[buf.tab[i].grade - 1], len5, "|*");
+			int len6 = 62 - strlen(force_armees[buf.tab[i].force_armee - 1]) - 14;
+			printf("*| Force armee : %s %*s\n", force_armees[buf.tab[i].force_armee - 1], len6, "|*");
+			int len7 = 62 - strlen(region_militaires[buf.tab[i].region_militaire - 1]) - 19;
+			printf("*| Region militaire : %s %*s\n", region_militaires[buf.tab[i].region_militaire - 1], len7, "|*");
+			printf("%s\n", str1);
+		}
+		j++;
+	   printf("%s\n", str);
+   	printf("\t\t\t *| Bloc : %d  |*\n", i );
+	   printf("\t\t\t * * * * * * * *\n");
 	}
- 
-   Afficher_Bloc(F, 3);
-*/
    Afficher_Entete(F);
 }  
    

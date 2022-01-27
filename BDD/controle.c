@@ -55,7 +55,8 @@ int main () {
 	// le menu
 	while (1) {
 		system("clear");
-		printf("Les champs d'information disponible a manipuler :  \n");
+		printf("\n\n\n\t\t\t\tSoyez les bienvenues votre Excellence !\n\n\n\n");
+		printf("Voici les champs d'information disponible a manipuler :  \n");
 		printf("			1) La force armee \n");
 		printf("			2) Le grade \n");
 		printf("			3) Le groupe sanguin \n");
