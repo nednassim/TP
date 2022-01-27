@@ -249,32 +249,32 @@ void Tri(Index *arr, int l, int r, int opt) {
 
 // Module pour chargement initial du fichier LObarreF 
 void Chargement_Initial(char *nom_fichier, int N) {
-	FILE *F1 = fopen("BDD/force_armee.bin", "rb");
-	FILE *F2 = fopen("BDD/grade.bin", "rb");
-	FILE *F3 = fopen("BDD/region_militaire.bin", "rb");
-	FILE *F4 = fopen("BDD/wilaya.bin", "rb");
+	FILE *F1 = fopen("BDD/force_armee.bin", "rb");		 // Ouverture du fichier des forces armees disponibles
+	FILE *F2 = fopen("BDD/grade.bin", "rb"); 				 // Ouverture du fichier des grades disponibles
+	FILE *F3 = fopen("BDD/region_militaire.bin", "rb"); // Ouverture du fichier des regions militaires disponibles
+	FILE *F4 = fopen("BDD/wilaya.bin", "rb"); 			 // Ouverture du fichier des wilayas disponibles
 
 	int force_armee, grade, region_militaire, wilaya;
-	fread(&force_armee, sizeof(int), 1, F1);
-	fread(&grade, sizeof(int), 1, F2);
-	fread(&region_militaire, sizeof(int), 1, F3);
-	fread(&wilaya, sizeof(int), 1, F4);
-
-	fclose(F1);
-	fclose(F2);
-	fclose(F3);
-	fclose(F4);
+	fread(&force_armee, sizeof(int), 1, F1);		 // Lecture du nombre de forces armees disponibles
+	fread(&grade, sizeof(int), 1, F2);				 // Lecture du nombre de grades  disponibles
+	fread(&region_militaire, sizeof(int), 1, F3); // Lecture du nombre de regions militaires disponibles
+	fread(&wilaya, sizeof(int), 1, F4);				 // Lecture du nombre de wilayas disponibles
+	
+	fclose(F1);		// Fermeture du fichier des forces armees
+	fclose(F2);		// Fermeture du fichier des grades
+	fclose(F3); 	// Fermeture du fichier des region millitaires
+	fclose(F4); 	// Fermeture du fichier des wilayas
 
 	Tenreg personnel;
-	Index index[N];
+	Index index[N];	// La table d'index
 	int i, j;
 	i = 1;
 	j = 0;
-	F = Ouvrir(nom_fichier, 'N');
-	FILE *G = fopen("index.bin", "wb+");
-	fwrite(&N, sizeof(int), 1, G);
+	F = Ouvrir(nom_fichier, 'N');				// Ouverture du fichier de donnees
+	FILE *G = fopen("index.bin", "wb+");	// Ouverture du fichier d'index
+	fwrite(&N, sizeof(int), 1, G);			// Ecriture du nombre de peronnels dans le fichier d'index
    char *annee = (char*) malloc (5 * sizeof(char));
-	for (int k = 0; k < N; k++) {
+	for (int k = 0; k < N; k++) {		// chargement du fichier et de la table d'index simultanement
 		memset(&personnel, 0, sizeof(Tenreg));
 		memset(&index[k], 0, sizeof(Index));
 		personnel = creer_perso(force_armee, grade, region_militaire, wilaya);
@@ -307,10 +307,10 @@ void Chargement_Initial(char *nom_fichier, int N) {
 	Aff_entete(F, 3, i);		//	mise a jour du dernier bloc
 	Aff_entete(F, 4, N);		//	mise a jour du compteur d'insertion
 
-	Tri(index, 0, N - 1, 1);  
-	fwrite(&index, sizeof(Index), N, G);
-	Fermer(F);
-	fclose(G);
+	Tri(index, 0, N - 1, 1);  // Tri de la table d'index selon les matrices
+	fwrite(&index, sizeof(Index), N, G);	// Ecriture de la table d'index dans le fichier d'index
+	Fermer(F);		// Fermeture du fichier de donnees
+	fclose(G);		// Fermeture du fichier d'index
 }
 
 // Module pour la recherche dichotomique dans la table d'index
@@ -463,20 +463,20 @@ void Recherche_Dichotomique(Index *index, int N, int cle, int opt, int *pos, int
 // La recherche dichotomique en utilisant la table d'index
 //void Recherche(char *nom_fichier, int matricule, int *trouve, int *i, int *j) {
 void Recherche(LObarreF *F, int matricule, int *trouve, int *i, int *j) {
-	FILE *G = fopen("index.bin", "rb+");
-	int N = entete(F, 4) - entete(F, 5);
+	FILE *G = fopen("index.bin", "rb+");	// Ouverture du fichier d'index
+	int N = entete(F, 4) - entete(F, 5);	// Le nombre de personnels dans le fichier de donnees
 	int pos = 0;
-	Index index[N];
-	fseek(G, sizeof(int), SEEK_SET);
-	fread(&index, sizeof(Index), N, G);
-	Recherche_Dichotomique(index, N, matricule, 1, &pos, trouve);
+	Index index[N];	// La table d'index
+	fseek(G, sizeof(int), SEEK_SET);			// Positionnement sur le debut de la table d'index
+	fread(&index, sizeof(Index), N, G);		// Recuperation de la table d'index
+	Recherche_Dichotomique(index, N, matricule, 1, &pos, trouve);	// Recherche dichotomique selon les matricules
 
 	if (*trouve) {
-		*i = index[pos].adr / 85 + 1;
-		*j = index[pos].adr % 85;
+		*i = index[pos].adr / 85 + 1;		// Le numero de bloc 
+		*j = index[pos].adr % 85;			// La position dans le bloc
 	} else {
-		*i = entete(F, 3);		// le bloc queue
-		*j = N  % 85;	// la derniere position
+		*i = entete(F, 3);	// le bloc queue
+		*j = N  % 85;			// la derniere position
 	}
 	fclose(G);
 }
@@ -485,24 +485,26 @@ void Recherche(LObarreF *F, int matricule, int *trouve, int *i, int *j) {
 //void Insertion(char *nom_fichier, Tenreg personnel) {
 void Insertion(LObarreF *F)  {
 	int trouve, i, j;
-	FILE *F1 = fopen("BDD/force_armee.bin", "rb");
-	FILE *F2 = fopen("BDD/grade.bin", "rb");
-	FILE *F3 = fopen("BDD/region_militaire.bin", "rb");
-	FILE *F4 = fopen("BDD/wilaya.bin", "rb");
+	FILE *F1 = fopen("BDD/force_armee.bin", "rb");		 // Ouverture du fichier des forces armees disponibles
+	FILE *F2 = fopen("BDD/grade.bin", "rb"); 				 // Ouverture du fichier des grades disponibles
+	FILE *F3 = fopen("BDD/region_militaire.bin", "rb"); // Ouverture du fichier des regions militaires disponibles
+	FILE *F4 = fopen("BDD/wilaya.bin", "rb"); 			 // Ouverture du fichier des wilayas disponibles
 
 	int force_armee, grade, region_militaire, wilaya;
-	fread(&force_armee, sizeof(int), 1, F1);
-	fread(&grade, sizeof(int), 1, F2);
-	fread(&region_militaire, sizeof(int), 1, F3);
-	fread(&wilaya, sizeof(int), 1, F4);
+	fread(&force_armee, sizeof(int), 1, F1);		 // Lecture du nombre de forces armees disponibles
+	fread(&grade, sizeof(int), 1, F2);				 // Lecture du nombre de grades  disponibles
+	fread(&region_militaire, sizeof(int), 1, F3); // Lecture du nombre de regions militaires disponibles
+	fread(&wilaya, sizeof(int), 1, F4);				 // Lecture du nombre de wilayas disponibles
+	
+	fclose(F1);		// Fermeture du fichier des forces armees
+	fclose(F2);		// Fermeture du fichier des grades
+	fclose(F3); 	// Fermeture du fichier des region millitaires
+	fclose(F4); 	// Fermeture du fichier des wilayas
 
-	fclose(F1);
-	fclose(F2);
-	fclose(F3);
-	fclose(F4);
+	// Creation d'un personnel selon les fichiers precedents
 	Tenreg personnel = creer_perso(force_armee, grade, region_militaire, wilaya);
-
-	Recherche(F, personnel.matricule, &trouve, &i, &j);
+	
+	Recherche(F, personnel.matricule, &trouve, &i, &j);	// Recherche du personnel par son matricule
 	if (!trouve) {		// le personnel est inexistant
 
 		if (!entete(F, 1)) {		// fichier vide
@@ -532,13 +534,13 @@ void Insertion(LObarreF *F)  {
 				Aff_entete(F, 4, entete(F, 4) + 1);		
 			}
 		} 
-		FILE *G = fopen("index.bin", "rb+");
+		FILE *G = fopen("index.bin", "rb+");		// Ouverture du fichier d'index
 		if (G != NULL) {
-			int N = entete(F, 4) - entete(F, 5);
+			int N = entete(F, 4) - entete(F, 5);	// Le nombre de personnels 
 			Index ind;
-			Index *index = (Index*) malloc (N * sizeof(Index));	
-			fseek(G, sizeof(int), SEEK_SET);
-			fread(index, sizeof(Index), N - 1, G);
+			Index *index = (Index*) malloc (N * sizeof(Index));	// La table d'index
+			fseek(G, sizeof(int), SEEK_SET);				// Positionnement sur le debut de la table d'index
+			fread(index, sizeof(Index), N - 1, G);		// Recuperation de la table d'index
 			ind.cle = personnel.matricule;
 			ind.adr = N - 1;
 			ind.grade = personnel.grade;
@@ -549,13 +551,13 @@ void Insertion(LObarreF *F)  {
 			annee[4] = '\0';
 			ind.age = 2022 - atoi(annee);
 			free(annee);
-			index[N - 1] = ind;
-			Tri(index, 0, N - 1, 1);
+			index[N - 1] = ind;			// Ajout de l'index construit a la table d'index
+			Tri(index, 0, N - 1, 1);	// Tri de la table d'index selon les matricules
 			rewind(G);
-			fwrite(&N, sizeof(int), 1, G);
-			fwrite(index, sizeof(Index), N, G);
+			fwrite(&N, sizeof(int), 1, G);		// Mise a jour du nombre d'enregistrement dans le fichier d'index
+			fwrite(index, sizeof(Index), N, G);	// Mise a jour de la table d'index dans le fichier d'index	
 			free(index);
-			fclose(G);
+			fclose(G);		// Fermeture du fichier d'index
 		}
 		printf("Operation d'insertion terminee avec succes!\n");
 	} else {
@@ -570,16 +572,16 @@ void Suppression1(LObarreF *F, int i, int j) {
 	LireDir(F, i, &buf);
 	if (i == entete(F, 3)) {
 		LireDir(F, i, &buf);
-		buf.tab[j] = buf.tab[buf.nb - 1];		// ecrasement de l'enregistrement par le dernier enregistrement
-		buf.nb--;									   // decrementation du nombre d'enregistrements dans le bloc
+		buf.tab[j] = buf.tab[buf.nb - 1];		// Ecrasement de l'enregistrement par le dernier enregistrement
+		buf.nb--;									   // Decrementation du nombre d'enregistrements dans le bloc
 		if (buf.nb > 0) {
 			EcrireDir(F, i, buf);
 		} else {
 			if (entete(F, 3) == 1) {
 				EcrireDir(F, i, buf);
 			} else {
-				Aff_entete(F, 1, entete(F, 1) - 1);		// mise a jour du nombre de bloc utilises
-				Aff_entete(F, 3, entete(F, 3) - 1);		// mise a jour de la queue
+				Aff_entete(F, 1, entete(F, 1) - 1);		// Mise a jour du nombre de bloc utilises
+				Aff_entete(F, 3, entete(F, 3) - 1);		// Mise a jour de la queue
 			}
 		}
 	} else {
@@ -594,36 +596,36 @@ void Suppression1(LObarreF *F, int i, int j) {
 			EcrireDir(F, entete(F, 3), buf2);
 		} else {
 		// cas 2: dernier bloc contient un seul personnel
-			Aff_entete(F, 1, entete(F, 1) - 1);		// mise a jour du nombre de bloc utilises
-			Aff_entete(F, 3, entete(F, 3) - 1);		// mise a jour de la queue
+			Aff_entete(F, 1, entete(F, 1) - 1);		// Mise a jour du nombre de bloc utilises
+			Aff_entete(F, 3, entete(F, 3) - 1);		// Mise a jour de la queue
 		}
 	}
-	Aff_entete(F, 5, entete(F, 5) + 1);	 	// mise a jour du compteur de suppresssion
+	Aff_entete(F, 5, entete(F, 5) + 1);	 	// Mise a jour du compteur de suppresssion
 }
 
 // Module d'epuration dans un fichier LObarreF
 void Epuration(LObarreF *F) {
-	FILE *G = fopen("index.bin", "rb+");
+	FILE *G = fopen("index.bin", "rb+");	// Ouverture du fichier d'index
 	if (G != NULL) {
 		int N;
-		fread(&N, sizeof(int), 1, G);
-		Index index[N];
-		fread(&index, sizeof(Index), N, G);
-		Index *temp = (Index*) malloc (N * sizeof(Index));	
+		fread(&N, sizeof(int), 1, G);		// Recuperation du nombre de personnels
+		Index index[N];						// La table d'index
+		fread(&index, sizeof(Index), N, G);		// Recuperation de la table d'index
+		Index *temp = (Index*) malloc (N * sizeof(Index));		// Une table d'index temporaire(ne contient pas de duplique)
 		int j = 0;
 		for (int i = 0; i < N - 1; i++) {
 			if (index[i].cle !=  index[i + 1].cle) {
-				temp[j++] = index[i]; 
+				temp[j++] = index[i]; 	// Insertion dans la table temporaire
 			} else {
-				Suppression1(F, (index[i + 1].adr / 85) + 1, index[i + 1].adr % 85);
+				Suppression1(F, (index[i + 1].adr / 85) + 1, index[i + 1].adr % 85);	// Suppression du fichier de donnes
 			}	
 		}
 		temp[j] = index[N - 1];	
 		rewind(G);
-		fwrite(&j, sizeof(int), 1, G);
-		fwrite(temp, sizeof(Index), j, G);
+		fwrite(&j, sizeof(int), 1, G);		// Mise a jour du nombre de personnels
+		fwrite(temp, sizeof(Index), j, G);	// Mise a jour de la table d'index
 		free(temp);
-		fclose(G);
+		fclose(G);	// Fermeture du fichier de donnees
 	}
 }
 
@@ -631,26 +633,25 @@ void Epuration(LObarreF *F) {
 Tenreg Modifier_Region_Militaire(LObarreF *F, int matricule, int region_militaire, int *pos) {
 	int trouve, i, j;
 
-	Recherche(F, matricule, &trouve, &i, &j);
+	Recherche(F, matricule, &trouve, &i, &j);	// Recherche du personnel par son matricule
 	if (trouve) {		// le personnel est inexistant
 		LireDir(F, i, &buf);
 		buf.tab[j].region_militaire = region_militaire;
-		EcrireDir(F, i, buf);
-		FILE *G = fopen("index.bin", "rb+");
+		EcrireDir(F, i, buf);	// Mise a jour dans le fichier de donnees
+		FILE *G = fopen("index.bin", "rb+");	// Ouverture du fichier d'index
 		if (G != NULL) {
 			Index index;
-			fseek(G, sizeof(int) + ((i - 1) * b + j) * sizeof(Index), SEEK_SET);
-			fread(&index, sizeof(Index), 1, G);
-			index.region_militaire = region_militaire;
-			fseek(G, -sizeof(Index), SEEK_CUR);
-			fwrite(&index, sizeof(Index), 1, G);
-			fclose(G);
+			fseek(G, sizeof(int) + ((i - 1) * b + j) * sizeof(Index), SEEK_SET);	// Positionnement sur ce personnel
+			fread(&index, sizeof(Index), 1, G);				// Recuperation de l'index donnee
+			index.region_militaire = region_militaire;	// Changement de la region militaire de l'index
+			fseek(G, -sizeof(Index), SEEK_CUR);				// Repositionnement sur cet index
+			fwrite(&index, sizeof(Index), 1, G);			// Mise a jour de cet index
+			fclose(G);		// Fermeture du fichier d'index
 		}
 		*pos = (i - 1) * b + j + 1;
 		return buf.tab[j];
 	} else {
-		perror("Ce personnel est inexistant dans le fichier de donnees!\n");
-		exit(0);
+		printf("Ce personnel est inexistant dans le fichier de donnees!\n");
 	}
 }
 
@@ -664,16 +665,16 @@ void Suppression(LObarreF *F, int matricule) {
 		// le bloc concerne est le bloc queue
 		if (i == entete(F, 3)) {
 			LireDir(F, i, &buf);
-			buf.tab[j] = buf.tab[buf.nb - 1];		// ecrasement de l'enregistrement par le dernier enregistrement
-			buf.nb--;									   // decrementation du nombre d'enregistrements dans le bloc
+			buf.tab[j] = buf.tab[buf.nb - 1];		// Ecrasement de l'enregistrement par le dernier enregistrement
+			buf.nb--;									   // Decrementation du nombre d'enregistrements dans le bloc
 			if (buf.nb > 0) {
 				EcrireDir(F, i, buf);					
 			} else {
 				if (entete(F, 3) == 1) {
 					EcrireDir(F, i, buf);						
 				} else {
-					Aff_entete(F, 1, entete(F, 1) - 1);		// mise a jour du nombre de bloc utilises
-					Aff_entete(F, 3, entete(F, 3) - 1);		// mise a jour de la queue
+					Aff_entete(F, 1, entete(F, 1) - 1);		// Mise a jour du nombre de bloc utilises
+					Aff_entete(F, 3, entete(F, 3) - 1);		// Mise a jour de la queue
 				}
 			}
 		} else {
@@ -688,92 +689,93 @@ void Suppression(LObarreF *F, int matricule) {
 				EcrireDir(F, entete(F, 3), buf2);
 			} else {
 			// cas 2: dernier bloc contient un seul personnel
-				Aff_entete(F, 1, entete(F, 1) - 1);		// mise a jour du nombre de bloc utilises
-				Aff_entete(F, 3, entete(F, 3) - 1);		// mise a jour de la queue
+				Aff_entete(F, 1, entete(F, 1) - 1);		// Mise a jour du nombre de bloc utilises
+				Aff_entete(F, 3, entete(F, 3) - 1);		// Mise a jour de la queue
 			}
 		}
-		Aff_entete(F, 5, entete(F, 5) + 1);	 	// mise a jour du compteur de suppresssion
-		FILE *G = fopen("index.bin", "rb+");
+		Aff_entete(F, 5, entete(F, 5) + 1);	 	// Mise a jour du compteur de suppresssion
+		FILE *G = fopen("index.bin", "rb+");	// Ouverture du fichier d'index
 		if (G != NULL) {
 			int N;
-			fread(&N, sizeof(int), 1, G);
+			fread(&N, sizeof(int), 1, G);			// Recuperation du nombre de personnels
 			Index *index = (Index*) malloc (N * sizeof(Index));	
-			fread(index, sizeof(Index), N, G);
-			Tri(index, 0, N - 1, 2);		
+			fread(index, sizeof(Index), N, G);	// Recuperation de la table d'index
+			Tri(index, 0, N - 1, 2);		// Tri de la table d'index selon les adresses
 			N--;
-			index[(i - 1) * entete(F, 1) + j] = index[N];
-			Tri(index, 0, N - 1, 1);
+			index[(i - 1) * entete(F, 1) + j] = index[N];	
+			Tri(index, 0, N - 1, 1);		// Tri de la table d'index selon les matricules
 			rewind(G);
-			fwrite(&N, sizeof(int), 1, G);
-			fwrite(index, sizeof(Index), N, G);
+			fwrite(&N, sizeof(int), 1, G);		 // Mise a jour du nombre de personnels 
+			fwrite(index, sizeof(Index), N, G);	 // Mise a jour de la table d'index
 			free(index);
-			fclose(G);
+			fclose(G);		// Fermeture du fichier d'index
 		}
 	} else {
-		perror("Ce personnel est inexistant dans le fichier de donnees!\n");
-		exit(0);
+		printf("Ce personnel est inexistant dans le fichier de donnees!\n");
 	}
 }
 
 // Module pour supprimer les personnels d'une force armee
 void Suppression_Force_Armee(LObarreF *F, int force_armee) {
-	FILE *G = fopen("index.bin", "rb+");
+	FILE *G = fopen("index.bin", "rb+");		// Ouverture du fichier d'index
 	if (G != NULL) {
 		int N;
 		int pos = 0, trouve = 0;
-		fread(&N, sizeof(int), 1, G);
+		fread(&N, sizeof(int), 1, G);				// Recuperation du nombre de personnels
 		Index index[N];
-		fread(&index, sizeof(Index), N, G);
-		Tri(index, 0, N - 1, 5);
-		Recherche_Dichotomique(index, N, force_armee, 5, &pos, &trouve);
-		
-		if (trouve) {
+		fread(&index, sizeof(Index), N, G);		// Recuperation de la table d'index
+		Tri(index, 0, N - 1, 5);					// Tri de la table d'index selon les force armees
+		Recherche_Dichotomique(index, N, force_armee, 5, &pos, &trouve);	// Recherche de la force armee dans la table d'index
+	
+		if (trouve) {		
 			int i1 = pos - 1;
-			while (index[i1].force_armee == force_armee) {
+			while (index[i1].force_armee == force_armee) {	// Recuperation des personnels avant cette position
 				Suppression1(F, index[i1].adr / 85 + 1,index[i1].adr % 85);
 				index[i1] = index[N - 1];
 				i1--;
 				N--;
 			}
 			i1 = pos;
-			while (index[i1].force_armee == force_armee) {
+			while (index[i1].force_armee == force_armee) {	// Recuperation des personnels apres cette position
 				Suppression1(F, index[i1].adr / 85 + 1,index[i1].adr % 85);
 				index[i1] = index[N - 1];
 				i1++;
 				N--;
 			}
 			rewind(G);
-			fwrite(&N, sizeof(int),  1 , G);
-			Tri(index, 0, N - 1, 5);
-			fwrite(&index, sizeof(Index), N, G);
+			fwrite(&N, sizeof(int),  1 , G);			// Mise a jour du nombre de personnels
+			Tri(index, 0, N - 1, 1);					// Tri de la table d'index selon les matricules
+			fwrite(&index, sizeof(Index), N, G);	// Mise a jour de la table d'index dans le fichier d'index
 		}
 	}
-	fclose(G);
+	fclose(G);		// Fermeture du fichier d'index
 }
 
 // Module pour consulter tous les personnels d'une region donnee ayant l'age dans l'intervalle donne
 Tenreg *Recherche_Intervale(LObarreF *F, int region_militaire, int age_min, int age_max, int *n) {
-	FILE *G = fopen("index.bin", "rb");
+	FILE *G = fopen("index.bin", "rb");		// Ouverture du fichier d'index
 	if (G != NULL) {
 		*n = 0;
 		int pos = 0, trouve = 0;
 		int N;
-		fread(&N, sizeof(int), 1, G);
+		fread(&N, sizeof(int), 1, G);			 // Recuperation du nombre de personnels
 		Index index[N];
-		fread(&index, sizeof(Index), N, G);
-		Tri(index, 0, N - 1, 6);
+		fread(&index, sizeof(Index), N, G);	 // Recuperation de la table d'index	
+		Tri(index, 0, N - 1, 6);				 // Tri de la table d'index selon les regions militaires
 		Recherche_Dichotomique(index, N, region_militaire, 6, &pos, &trouve);
 		if (trouve) {
 			Index *ind = (Index*) malloc (N * sizeof(Index));
 			int i1 = pos - 1;
 			int j1 = 0;
-			while ((i1 >= 0) && (index[i1].region_militaire == region_militaire)) {
+			// Recuperation des index avent cette postion 
+			while ((i1 >= 0) && (index[i1].region_militaire == region_militaire)) {	
 				if ((index[i1].age >= age_min) && (index[i1].age <= age_max)) {
 					ind[j1++] = index[i1];
 				}
 				i1--;	
 			}
 			i1 = pos;
+			// Recuperation des index apres cette postion 
 			while ((i1 <= N - 1) && (index[i1].region_militaire == region_militaire)) {
 				if ((index[i1].age >= age_min) && (index[i1].age <= age_max)) {
 					ind[j1++] = index[i1];
@@ -785,23 +787,23 @@ Tenreg *Recherche_Intervale(LObarreF *F, int region_militaire, int age_min, int 
 				printf("Il n'y a pas de personnels selon ce critere!\n");
 				fclose(G);
 			} else {
-				ind = (Index*) realloc (ind, j1 * sizeof(Index));
+				ind = (Index*) realloc (ind, j1 * sizeof(Index));		
 				Tenreg *personnels = (Tenreg*) malloc (j1 * sizeof(Tenreg));
 				Tri(ind, 0, j1 - 1, 2);
 				for (int k = 0; k < j1; k++) {
-					LireDir(F, ind[k].adr / 85 + 1, &buf);
-					personnels[k] = buf.tab[ind[k].adr % 85];
+					LireDir(F, ind[k].adr / 85 + 1, &buf);	 		// Recuperation du bloc a utiliser
+					personnels[k] = buf.tab[ind[k].adr % 85];		// Chargement dans la table des personnels
 				}
 				*n = j1;
 				free(ind);
-				fclose(G);
-				return personnels;
+				fclose(G);		// Fermeture du fichier d'index
+				return personnels;		// Retourne la table des personnels
 			}
 		} else {
-			perror("Pas de personnels de cet region militaire! \n");
+			printf("Pas de personnels de cette region militaire! \n");
 		}
 	}
-	fclose(G);
+	fclose(G);	// Fermeture du fichier d'index
 }
 
 // Module pour consulter tous les personnels appartenant a une categorie de grade donnee
@@ -814,10 +816,10 @@ Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n) {
 	FILE *G = fopen("index.bin", "rb");
 	if (G != NULL) { 
 		int N;
-		fread(&N, sizeof(int), 1, G);
+		fread(&N, sizeof(int), 1, G);				// Recuperation du nombre de personnels
 		Index index[N];
-		fread(&index, sizeof(Index), N, G);
-		Tri(index, 0, N - 1, 4);
+		fread(&index, sizeof(Index), N, G);		// Recuperation de la table d'index	
+		Tri(index, 0, N - 1, 4);					// Tri de la table d'index selon grade
 		
 		Index *ind = (Index*) malloc (N * sizeof(Index));
 		int pos = 1, trouve = 0, j1 = 0;
@@ -1042,23 +1044,24 @@ Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n) {
 		Tenreg *personnels = (Tenreg*) malloc (j1 * sizeof(Tenreg));
 		Tri(ind, 0, j1 - 1, 2);
 		for (int k = 0; k < j1; k++) {
-			LireDir(F, ind[k].adr / 85 + 1, &buf);
-			personnels[k] = buf.tab[ind[k].adr % 85];
+			LireDir(F, ind[k].adr / 85 + 1, &buf);			// Recuperation du bloc a utiliser
+			personnels[k] = buf.tab[ind[k].adr % 85];		// Chargement dans la table des personnels
 		}
 		free(ind);
-		return personnels;
+		fclose(G);			// Fermeture du fichie d'index
+		return personnels;		// Retourne la table des personnels 
 	}
-	fclose(G);
+	fclose(G);		// Fermeture du fichier d'index
 }
 
 // Module pour fragmenter le fichier en 6 fichiers selon la region militaire
 void Fragmentation(LObarreF *F) {
-	FILE *F1 = fopen("F/F1", "wb+");
-	FILE *F2 = fopen("F/F2", "wb+");
-	FILE *F3 = fopen("F/F3", "wb+");
-	FILE *F4 = fopen("F/F4", "wb+");
-	FILE *F5 = fopen("F/F5", "wb+");
-	FILE *F6 = fopen("F/F6", "wb+");
+	FILE *F1 = fopen("F/F1", "wb+");		// Ouverture du fichier de la region militaire 1
+	FILE *F2 = fopen("F/F2", "wb+");		// Ouverture du fichier de la region militaire 2
+	FILE *F3 = fopen("F/F3", "wb+");		// Ouverture du fichier de la region militaire 3
+	FILE *F4 = fopen("F/F4", "wb+");		// Ouverture du fichier de la region militaire 4
+	FILE *F5 = fopen("F/F5", "wb+");		// Ouverture du fichier de la region militaire 5
+	FILE *F6 = fopen("F/F6", "wb+");		// Ouverture du fichier de la region militaire 6
 
 	if ((F1!=NULL) && (F2!=NULL) && (F3!=NULL) && (F4!=NULL) && (F5!=NULL) && (F6!=NULL)) {
 		for (int i = 1; i <= entete(F, 1); i++) {
@@ -1067,27 +1070,27 @@ void Fragmentation(LObarreF *F) {
 			for (int j = 0; j < buf.nb; j++)  {
 				int k = buf.tab[j].region_militaire;
 				switch(k) {
-					case 1: {
+					case 1: {	// Region militaire 1
 						fwrite(&buf.tab[j], sizeof(Tenreg), 1, F1);
 						break;		  
 					}
-					case 2: {
+					case 2: {	// Region militaire 2
 						fwrite(&buf.tab[j], sizeof(Tenreg), 1, F2);
 						break;		  
 					}
-					case 3: {
+					case 3: {	// Region militaire 3
 						fwrite(&buf.tab[j], sizeof(Tenreg), 1, F3);
 						break;		  
 					}
-					case 4: {
+					case 4: {	// Region militaire 4
 						fwrite(&buf.tab[j], sizeof(Tenreg), 1, F4);
 						break;		  
 					}
-					case 5: {
+					case 5: {	// Region militaire 5
 						fwrite(&buf.tab[j], sizeof(Tenreg), 1, F5);
 						break;		  
 					}
-					case 6: {
+					case 6: {	// Region militaire 6
 						fwrite(&buf.tab[j], sizeof(Tenreg), 1, F6);
 						break;		  
 					}			
@@ -1096,10 +1099,10 @@ void Fragmentation(LObarreF *F) {
 		}
 	}
 
-	fclose(F1);
-	fclose(F2);
-	fclose(F3);
-	fclose(F4);
-	fclose(F5);
-	fclose(F6);
+	fclose(F1);		// Fermeture du fichier de la region militaire 1
+	fclose(F2);		// Fermeture du fichier de la region militaire 2
+	fclose(F3);		// Fermeture du fichier de la region militaire 3
+	fclose(F4);		// Fermeture du fichier de la region militaire 4
+	fclose(F5);		// Fermeture du fichier de la region militaire 5
+	fclose(F6);		// Fermeture du fichier de la region militaire 6
 }
