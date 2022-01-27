@@ -60,7 +60,7 @@ int main () {
 		printf("			2) Le grade \n");
 		printf("			3) Le groupe sanguin \n");
 		printf("			4) La region militaire \n");
-		printf("			5) La wilaya de naissance \n");
+		printf("			5) La wilaya \n");
 		printf("Choisissez une option : ");
 		int option;	
 		scanf("%d", &option);
@@ -75,7 +75,7 @@ int main () {
 				scanf("%d", &opt);
 				switch(opt) { 
 					case 1: {	// liste des forces armees disponibles
-						FILE *F1 = fopen("force_armee.bin", "rb"); // ouverture du fichier des forces armees binaire
+						FILE *F1 = fopen("BDD/force_armee.bin", "rb"); // ouverture du fichier des forces armees binaire
 						int n;
 						fread(&n, sizeof(int), 1, F1);
 						Force_armee force_armee;
@@ -86,7 +86,7 @@ int main () {
 						break;
 					}
 					case 2: {	// ajout d'une force armee
-						FILE *F1 = fopen("force_armee.bin", "rb+"); // ouverture du fichier des forces armees binaire
+						FILE *F1 = fopen("BDD/force_armee.bin", "rb+"); // ouverture du fichier des forces armees binaire
 						int n;
 						fread(&n, sizeof(int), 1, F1); 
 						n += 1;
@@ -104,8 +104,8 @@ int main () {
 						break;
 					}
 					case 3: {	// suppression d'une force armee
-						FILE *F1 = fopen("force_armee.bin", "rb"); // ouverture du fichier des forces armees binaire
-						FILE *F = fopen("force_armee_temp.bin", "wb+"); // ouverture du fichier des forces armees binaire
+						FILE *F1 = fopen("BDD/force_armee.bin", "rb"); // ouverture du fichier des forces armees binaire
+						FILE *F = fopen("BDD/force_armee_temp.bin", "wb+"); // ouverture du fichier des forces armees binaire
 						int n;
 						fread(&n, sizeof(int), 1, F1); 
 						n -= 1;
@@ -122,7 +122,7 @@ int main () {
 						}
 						fclose(F1);
 						fclose(F);
-						system("rm force_armee.bin && mv force_armee_temp.bin force_armee.bin");
+						system("rm BDD/force_armee.bin && mv BDD/force_armee_temp.bin BDD/force_armee.bin");
 						break;
 					}
 				}
@@ -139,7 +139,7 @@ int main () {
 				scanf("%d", &opt);
 				switch(opt) {
 					case 1: { 	// liste des grades 				  
-						FILE *F2 = fopen("grade.bin", "rb");	// ouverture du fichier des grades binaire
+						FILE *F2 = fopen("BDD/grade.bin", "rb");	// ouverture du fichier des grades binaire
 						fseek(F2, sizeof(int), SEEK_SET);
 						Grade grade;
 						while (fread(&grade, sizeof(Grade), 1, F2) == 1) {
@@ -149,7 +149,7 @@ int main () {
 						break;
 					}
 					case 2: {	// ajout d'un grade 
-						FILE *F2 = fopen("grade.bin", "rb+"); // ouverture du fichier des grades binaire
+						FILE *F2 = fopen("BDD/grade.bin", "rb+"); // ouverture du fichier des grades binaire
 						int n;
 						fread(&n, sizeof(int), 1, F2); 
 						n += 1;
@@ -167,8 +167,8 @@ int main () {
 						break;					
 					}
 					case 3: {	// suppression d'un grade
-						FILE *F2 = fopen("grade.bin", "rb"); // ouverture du fichier des grades binaire
-						FILE *F = fopen("grade_temp.bin", "wb+"); // ouverture du fichier des grades binaire
+						FILE *F2 = fopen("BDD/grade.bin", "rb"); // ouverture du fichier des grades binaire
+						FILE *F = fopen("BDD/grade_temp.bin", "wb+"); // ouverture du fichier des grades binaire
 						int n;
 						fread(&n, sizeof(int), 1, F2); 
 						n -= 1;
@@ -185,14 +185,14 @@ int main () {
 						}
 						fclose(F2);
 						fclose(F);
-						system("rm grade.bin && mv grade_temp.bin grade.bin");  
+						system("rm BDD/grade.bin && mv BDD/grade_temp.bin BDD/grade.bin");  
 						break;
 					}
 				}
 				break;		  
 			}	  
 			case 3: {	// groupe sanguin
-				FILE *F3 = fopen("groupe_sanguin.bin", "rb");		// ouverture du fichier des groupes sanguins binaire
+				FILE *F3 = fopen("BDD/groupe_sanguin.bin", "rb");		// ouverture du fichier des groupes sanguins binaire
 				Groupe_sanguin groupe_sanguin;
 				while (fread(&groupe_sanguin, sizeof(Groupe_sanguin), 1, F3)) {
 					printf("%d %s\n", groupe_sanguin.num, groupe_sanguin.nom);	
@@ -210,7 +210,7 @@ int main () {
 				scanf("%d", &opt);
 				switch(opt) {
 					case 1: { 	// Liste des regions militaires
-						FILE *F4 = fopen("region_militaire.bin", "rb"); // ouverture du fichier des regions militaire binaire
+						FILE *F4 = fopen("BDD/region_militaire.bin", "rb"); // ouverture du fichier des regions militaire binaire
 						fseek(F4, sizeof(int), SEEK_SET);
 						Region_militaire region_militaire;
 						while (fread(&region_militaire, sizeof(Region_militaire), 1, F4) == 1) {
@@ -220,7 +220,7 @@ int main () {
 						break;
 					}
 					case 2: {	// Ajout d'un region militaire
-						FILE *F4 = fopen("region_militaire.bin", "rb+"); // ouverture du fichier des regions militaire binaire
+						FILE *F4 = fopen("BDD/region_militaire.bin", "rb+"); // ouverture du fichier des regions militaire binaire
 						int n;
 						fread(&n, sizeof(int), 1, F4); 
 						n += 1;
@@ -238,8 +238,8 @@ int main () {
  					   break;
 					}
 					case 3: {	// Suppression d'une region militaire
-						FILE *F4 = fopen("region_militaire.bin", "rb"); // ouverture du fichier des regions militaires  binaire
-						FILE *F = fopen("region_militaire_temp.bin", "wb+"); // ouverture du fichier des regions militaires binaire
+						FILE *F4 = fopen("BDD/region_militaire.bin", "rb"); // ouverture du fichier des regions militaires  binaire
+						FILE *F = fopen("BDD/region_militaire_temp.bin", "wb+"); // ouverture du fichier des regions militaires binaire
 						int n;
 						fread(&n, sizeof(int), 1, F4); 
 						n -= 1;
@@ -256,7 +256,7 @@ int main () {
 						}
 						fclose(F4);
 						fclose(F);
-						system("rm region_militaire.bin && mv region_miliraire_temp.bin region_militaire.bin");  
+						system("rm BDD/region_militaire.bin && mv BDD/region_miliraire_temp.bin BDD/region_militaire.bin");  
 						break;
 					}
 				}
@@ -272,7 +272,7 @@ int main () {
 				scanf("%d", &opt);
 				switch(opt) {
 					case 1: {  // Ajout d'une wilaya 
-						FILE *F5 = fopen("wilaya.bin", "rb"); // ouverture du wilayas de naissance binaire
+						FILE *F5 = fopen("BDD/wilaya.bin", "rb"); // ouverture du wilayas de naissance binaire
 						fseek(F5, sizeof(int), SEEK_SET);
 						Wilaya wilaya;
 						while (fread(&wilaya, sizeof(Wilaya), 1, F5) == 1) {
@@ -282,7 +282,7 @@ int main () {
 						break;
 					}
 					case 2 : {	// Ajout d'une wilaya
-						FILE *F5 = fopen("wilaya.bin", "rb+"); // ouverture du wilayas de naissance binaire
+						FILE *F5 = fopen("BDD/wilaya.bin", "rb+"); // ouverture du wilayas de naissance binaire
 						int n;
 						fread(&n, sizeof(int), 1, F5); 
 						n += 1;
@@ -300,8 +300,8 @@ int main () {
 						break;
 					}
 					case 3: {  // Suppression d'une wilaya 
-						FILE *F5 = fopen("wilaya.bin", "rb"); // ouverture du wilayas de naissance binaire
-					   FILE *F = fopen("wilaya_temp.bin", "wb+");
+						FILE *F5 = fopen("BDD/wilaya.bin", "rb"); // ouverture du wilayas de naissance binaire
+					   FILE *F = fopen("BDD/wilaya_temp.bin", "wb+");
 						int n;
 						fread(&n, sizeof(int), 1, F5); 
 						n -= 1;
@@ -318,7 +318,7 @@ int main () {
 						}
 						fclose(F5);
 						fclose(F);
-						system("rm wilaya.bin && mv wilaya_temp.bin wilaya.bin");  
+						system("rm BDD/wilaya.bin && mv BDD/wilaya_temp.bin BDD/wilaya.bin");  
 						break;
 					}
 				}

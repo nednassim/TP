@@ -30,6 +30,7 @@ int main () {
 		printf("\t5) Suppression d'un ou plusieurs personnels selon un critere donne\n");
 		printf("\t6) Consultation d'un ou plusieurs personnels selon un critere donne \n");
 		printf("\t7) Fragmentation du fichier de donnees PERSONNEL-ANP_DZ.bin en 6 fichiers selon la region militaire \n");
+		printf("\t8) Manipulation des fichiers de la structure du corps militaire \n");
 		printf("\t\t \n");
 		printf("Veuillez choisir une option : ");
 		int opt;
@@ -207,6 +208,17 @@ int main () {
 				printf("Operation de fragmentation du fichier de donnees terminee avec succes!\n");
 				Fermer(F);
 				break;			 
+			}
+			case 8: {
+				char mot_de_passe[10];
+				printf("Entrer votre mot de passe : ");
+				scanf("%s", mot_de_passe);
+				if (!strcmp(mot_de_passe, "Chengriha")) {
+					system("BDD/controle");
+				} else {
+					printf("Vous n'avez pas le previlege a manipuler ces fichiers \n");	
+				}				
+				break;
 			}
 			default: {
 				printf("Cette option est indisponible, veuillez reessayer!\n");						

@@ -236,14 +236,14 @@ void Fusion(Index *arr, int p, int q, int r, int opt) {
 }
 
 // Module pour trier la table d'index par tri fusion
-void Tri(Index *arr, int l, int r, int opt) {
+void Tri(Index *index, int l, int r, int opt) {
 	 if (l < r) {
     // m is the point where the array is divided into two subarrays
     int m = l + (r - l) / 2;
-    Tri(arr, l, m, opt);
-    Tri(arr, m + 1, r, opt);
+    Tri(index, l, m, opt);
+    Tri(index, m + 1, r, opt);
     // Merge the sorted subarrays
-    Fusion(arr, l, m, r, opt);
+    Fusion(index, l, m, r, opt);
    }
 }
 
@@ -460,8 +460,7 @@ void Recherche_Dichotomique(Index *index, int N, int cle, int opt, int *pos, int
 }
 
 
-// La recherche dichotomique en utilisant la table d'index
-//void Recherche(char *nom_fichier, int matricule, int *trouve, int *i, int *j) {
+// Module pour rechercher un personnel selon la matricule
 void Recherche(LObarreF *F, int matricule, int *trouve, int *i, int *j) {
 	FILE *G = fopen("index.bin", "rb+");	// Ouverture du fichier d'index
 	int N = entete(F, 4) - entete(F, 5);	// Le nombre de personnels dans le fichier de donnees
@@ -475,14 +474,13 @@ void Recherche(LObarreF *F, int matricule, int *trouve, int *i, int *j) {
 		*i = index[pos].adr / 85 + 1;		// Le numero de bloc 
 		*j = index[pos].adr % 85;			// La position dans le bloc
 	} else {
-		*i = entete(F, 3);	// le bloc queue
-		*j = N  % 85;			// la derniere position
+		*i = entete(F, 3);	// Le bloc queue
+		*j = N  % 85;			// La derniere position
 	}
 	fclose(G);
 }
 
 // Module d'insertion dans un fichier LObarreF
-//void Insertion(char *nom_fichier, Tenreg personnel) {
 void Insertion(LObarreF *F)  {
 	int trouve, i, j;
 	FILE *F1 = fopen("BDD/force_armee.bin", "rb");		 // Ouverture du fichier des forces armees disponibles
@@ -813,7 +811,7 @@ Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n) {
 	// 3 : Officiers : 7 : Capitaine, 8 :  Lieutenant, 9 : Sous-lieutenant, 10 : Aspirant [7, 8, 9, 10]
 	// 4 : Sous-officiers : 11 : Adjudant-chef, 12 : Adjudant, 13 : Sergent-chef, 14 : Sergent [11, 12, 13, 14]
 	// 5 : Hommes de troupes : 15 : Caporal-chef, 16 : Caporal, 17 : Djoundi [15, 16, 17]
-	FILE *G = fopen("index.bin", "rb");
+	FILE *G = fopen("index.bin", "rb");		// Ouverture du fichier d'index
 	if (G != NULL) { 
 		int N;
 		fread(&N, sizeof(int), 1, G);				// Recuperation du nombre de personnels
@@ -1038,18 +1036,22 @@ Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n) {
 				}
 				break;		  
 			}
-		}	  
-		*n = j1;
-		ind = (Index*) realloc (ind, j1 * sizeof(Index));
-		Tenreg *personnels = (Tenreg*) malloc (j1 * sizeof(Tenreg));
-		Tri(ind, 0, j1 - 1, 2);
-		for (int k = 0; k < j1; k++) {
-			LireDir(F, ind[k].adr / 85 + 1, &buf);			// Recuperation du bloc a utiliser
-			personnels[k] = buf.tab[ind[k].adr % 85];		// Chargement dans la table des personnels
+		}	 
+	   if (trouve) {	
+			*n = j1;
+			ind = (Index*) realloc (ind, j1 * sizeof(Index));
+			Tenreg *personnels = (Tenreg*) malloc (j1 * sizeof(Tenreg));
+			Tri(ind, 0, j1 - 1, 2);
+			for (int k = 0; k < j1; k++) {
+				LireDir(F, ind[k].adr / 85 + 1, &buf);			// Recuperation du bloc a utiliser
+				personnels[k] = buf.tab[ind[k].adr % 85];		// Chargement dans la table des personnels
+			}
+			free(ind);
+			fclose(G);			// Fermeture du fichie d'index
+			return personnels;		// Retourne la table des personnels 
+		} else {
+			printf("Cette categorie de grades est inexistante !\n");
 		}
-		free(ind);
-		fclose(G);			// Fermeture du fichie d'index
-		return personnels;		// Retourne la table des personnels 
 	}
 	fclose(G);		// Fermeture du fichier d'index
 }

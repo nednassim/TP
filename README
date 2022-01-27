@@ -1,0 +1,153 @@
+									
+				*********************************************************************************
+				*																										  *
+				*						Ecole Nationale Superieure d'Informatique (ESI)		  			  *
+				*																										  *
+				*				 							 TP SFSD													  *
+				*					Structure simple de fichiers - Methode: LObarreF					  *
+				*																										  *
+				*								Supervise par : Dr Kermi Adel									  *
+				*																										  *
+				*			  						NEDJAR Nassim	groupe 4										  *
+				*								Annee Universitaire : 2021/2022								  *
+				*																										  *
+				*																									  	  *
+				*********************************************************************************
+
+
+
+// Module pour trier la table d'index par tri fusion
+void Tri(Index *index, int l, int r, int opt) 
+	- Les parametres sont :
+		+ index : la table d'index
+		+ l : la borne inferieure
+		+ r : la borne superieure
+		+ opt : le critere de tri :
+			* 1 : cle
+			* 2 : adresse
+			* 3 : age
+			* 4 : grade
+			* 5 : force armee
+			* 6 : region militaire
+
+
+// Module pour chargement initial du fichier LObarreF 
+void Chargement_Initial(char *nom_fichier, int N) 
+Creation du fichier de donnees PERSONNEL-ANP_DZ.bin :
+	-Les parametres sont :
+		+ nom_fichier : le nom du fichier a charger
+		+ N : le nombre de personnels a creer
+		- On recupere les nombre de force armees, grades, regions militaires et wilayas des fichiers de la base de 
+	donnees BDD force_armee.bin, grade.bin, region_militaire.bin et wilaya.bin
+		- On ouvre le fichier de donnees PERSONNEL-ANP_DZ.bin en mode nouveau et le fichier d'index
+		- On boucle jusqu'a N , a chaque iteration :
+			|	
+			|__ - On cree un personnel aleatoirement et on l'ajoute a buffer
+			|   - Si le buffer est plein, on l'ecrit et on alloue un nouveau bloc, sinon on continue
+			|__ - On ajoute ce personnel a la table d'index
+
+		- On met a jour l'entete
+		- On ecrit la table d'index dans le fichier d'index
+		- On ferme le fichier de donnees PERSONNEL-ANP_DZ.bin et le fichier d'index
+		
+
+
+// Module pour la recherche dichotomique dans la table d'index
+void Recherche_Dichotomique(Index *index, int N, int cle, int opt, int *pos, int *trouve) 
+La recherche dichotomique :
+	- Les parametres sont :
+		+ N : la taille de la table d'index
+		+ cle : la cle a rechercher
+		+ opt : le critere a rechercher :
+			* 1 : cle
+			* 2 : adresse
+			* 3 : age
+			* 4 : grade
+			* 5 : force armee
+			* 6 : region militaire
+		+ pos : la position dans la table d'index(passe par variable)
+		+ trouve : un booleen pour indiquer si le personnel est trouve
+
+
+
+// Module pour rechercher un personnel selon la matricule
+void Recherche(LObarreF *F, int matricule, int *trouve, int *i, int *j) 
+	Les parametres sont :
+		+ F : fichier de type LObarreF
+		+ matricule : la matricule du personnel a rechercher
+		+ trouve : un booleen pour indiquer si le personnel est trouve (passage par variable)
+		+ i : le bloc ou le personnel se trouve (passage par variable)
+		+ j : la position dans le bloc ou le personnel se trouve	(passage par variable)
+	
+	- On ouvre le fichier d'index
+	- On charge la table d'index en MC
+	- On execute une recherche dichotomique de la matricule dans la table d'index
+	- Si le personnel est trouve : on renvoit le numero de bloc et sa position
+	- Sinon : on renvoie la position libre dans le bloc queue
+
+
+
+// Module d'insertion dans un fichier LObarreF
+void Insertion(LObarreF *F) 
+	Les parametres sont :
+		+ F : fichier de type LObarreF
+
+	- On recupere les nombre de force armees, grades, regions militaires et wilayas des fichiers de la base de 
+	donnees BDD force_armee.bin, grade.bin, region_militaire.bin et wilaya.bin
+	- On cree un personnel aleatoirement
+	- on recherche si le personnel existe deja dans le fichier de donnees
+	- Si le personnel est inexistant :
+		 - On l'insere et on met a jour le fichier de donnees (bloc, entete)
+		 - On ouvre le fichier d'index
+		 - On construit un index pour le nouveau personnel
+		 - On ajoute l'index a la table d'index 
+		 - On met a jour la table d'index dans le fichier d'index
+		 - On ferme le fichier d'index
+	
+
+
+// Module pour supprimer un  personnel a une position donnee
+void Suppression1(LObarreF *F, int i, int j) 
+	Les parametres sont :
+		+ F : fichier de type LObarreF
+		+ i : le bloc cible
+		+ j : la position dans le bloc
+	
+	- On supprime le personnel
+	- On met a jour le bloc concerne et l'entete
+
+
+	
+// Module d'epuration dans un fichier LObarreF
+void Epuration(LObarreF *F) 
+	- On ouvre le fichier d'index
+	- On charge la table d'index dans la MC
+	- On alloue une table d'index temporaire
+	- On itere jusqu'a N :
+	|
+	|__ - Si deux index consecutive ont la meme matricule, on supprime le deuxieme
+		 - Sinon, on ajoute l'index a la table temporaire
+
+	- On ecrit la table temporaire (qui ne contient pas de duplique) dans le fichier d'index
+	- On ferme le fichier d'index
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
