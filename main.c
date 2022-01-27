@@ -21,8 +21,8 @@ int main () {
 	system("clear");
 	debut();
 	printf("\n\t\t\t\t\t Soyez les bienvenues !\n\n\n\n ");
-   for (int each = 0; each < 3; ++each) {
-	   printf ( "\rChargement du programme de gestion du corps militaire %.*s   \b\b\b", each, "...");
+   for (int each = 0; each < 4; ++each) {
+	   printf ( "\r\t\t\tChargement du programme de gestion du corps militaire %.*s   \b\b\b", each, "...");
       fflush ( stdout);//force printing as no newline in output
       system("sleep 1");
   	}
@@ -255,18 +255,18 @@ int main () {
 			printf("Etes vous sur de quitter ? (O/N) : ");
 			char opt2;
 			scanf(" %c", &opt2);
-			if ((opt1 == 'O') || (opt1 == 'o')) {
-				debut();
+			if ((opt2 == 'O') || (opt2 == 'o')) {
 				system("clear");
+				debut();
 				printf("\n\t\t\t\t\t Merci pour votre confiance !\n\n\n\n ");
-			   for (int each = 0; each < 3; ++each) {
-				   printf ( "\r Fermeture du programme de gestion du corps militaire %.*s   \b\b\b", each, "...");
+			   for (int each = 0; each < 4; ++each) {
+				   printf ( "\r\t\t\t Fermeture du programme de gestion du corps militaire %.*s   \b\b\b", each, "...");
 			      fflush ( stdout);//force printing as no newline in output
 			      system("sleep 1");
 			  	}
-				exit(0);
+				break;
 			}
-			if ((opt1 == 'N') || (opt1 == 'n')) {
+			if ((opt2 == 'N') || (opt2 == 'n')) {
 				continue;
 			}
 		}
