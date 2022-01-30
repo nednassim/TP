@@ -707,6 +707,7 @@ void Suppression(LObarreF *F, int matricule) {
 			fwrite(index, sizeof(Index), N, G);	 // Mise a jour de la table d'index
 			free(index);
 			fclose(G);		// Fermeture du fichier d'index
+			printf("Operation de supression du personnel terminee avec succes!\n");
 		}
 	} else {
 		printf("Ce personnel est inexistant dans le fichier de donnees!\n");
@@ -724,7 +725,6 @@ void Suppression_Force_Armee(LObarreF *F, int force_armee) {
 		fread(&index, sizeof(Index), N, G);		// Recuperation de la table d'index
 		Tri(index, 0, N - 1, 5);					// Tri de la table d'index selon les force armees
 		Recherche_Dichotomique(index, N, force_armee, 5, &pos, &trouve);	// Recherche de la force armee dans la table d'index
-	
 		if (trouve) {		
 			int i1 = pos - 1;
 			while (index[i1].force_armee == force_armee) {	// Recuperation des personnels avant cette position
@@ -744,10 +744,10 @@ void Suppression_Force_Armee(LObarreF *F, int force_armee) {
 			fwrite(&N, sizeof(int),  1 , G);			// Mise a jour du nombre de personnels
 			Tri(index, 0, N - 1, 1);					// Tri de la table d'index selon les matricules
 			fwrite(&index, sizeof(Index), N, G);	// Mise a jour de la table d'index dans le fichier d'index
+			printf("Operation de suppression de la force armee terminee avec succes!\n");
 		} else {
 			printf("Cette force armee est indisponible !\n");
 		}
-		
 	}
 	fclose(G);		// Fermeture du fichier d'index
 }

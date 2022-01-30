@@ -335,6 +335,5 @@ int main () {
 			break;
 		}
 	}
-	printf("\nTime elapsed : %.3f s.\n",1.0 * clock() /CLOCKS_PER_SEC);
 	return 0;
 }

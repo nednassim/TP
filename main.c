@@ -83,7 +83,6 @@ int main () {
 				debut();
 				F = Ouvrir("PERSONNEL-ANP_DZ.bin", 'A');
 				Insertion(F);
-				printf("Operation d'insertion du nouvel personnel erminee avec succes!\n");
 				printf("Voulez vous afficher le fichier de donnees PERSONNEL-ANP_DZ.bin? (O/N) ");
 				char opt1;
 				scanf(" %c", &opt1);
@@ -101,14 +100,20 @@ int main () {
 				printf("Veuillez entrer la matricule du personnel voulu : ");
 				int matricule;
 				scanf("%d", &matricule);
-				printf("Veuillez entrer la nouvelle region militaire : ");
+				printf("\n1 1RM-Blida\n");
+				printf("2 2RM-Oran\n");
+				printf("3 3RM-Bechar\n");
+				printf("4 4RM-Ouargla\n");
+				printf("5 5RM-Constantine\n");
+				printf("6 6RM-Tamanrasset\n");
+				printf("\nVeuillez entrer la nouvelle region militaire : ");
 				int region_militaire;
 				scanf("%d", &region_militaire);
 				int pos;
 				Tenreg personnel = Modifier_Region_Militaire(F, matricule , region_militaire, &pos);
-				printf("*+--------------------------------------------+*\n");
+				printf("*+--------------------------------------------------------------+*\n");
 				Afficher_Perso(personnel, pos);
-				printf("*+--------------------------------------------+*\n");
+				printf("*+--------------------------------------------------------------+*\n");
 				printf("Operation de modification de region terminee avec succes!\n");
 				Fermer(F);
 				break;			 
@@ -131,16 +136,22 @@ int main () {
 						int matricule;
 						scanf("%d", &matricule);
 						Suppression(F, matricule);
-						printf("Operation de supression du personnel terminee avec succes!\n");
 						break;			 
 					}
 					case 2: {
 						Afficher_Fichier(F);
-						printf("Veuillez entrer la force armme voulu : ");
+						printf("\n1 Armee de terre\n");
+						printf("2 Armee de l'air\n");
+						printf("3 Marine nationale\n");
+						printf("4 Defense aerienne du territoire\n");
+						printf("5 Gendarmerie nationale\n");
+						printf("6 Garde republicaine\n");
+						printf("7 Departement du renseignement et de la securite\n");
+						printf("8 Sante militaire\n");
+						printf("\nVeuillez entrer la force armme voulu : ");
 						int force_armee;
 						scanf("%d", &force_armee);
 						Suppression_Force_Armee(F, force_armee);
-						printf("Operation de supressino de la force armee  terminee avec succes!\n");
 						break;			 
 					}
 					default : {
@@ -176,6 +187,12 @@ int main () {
 						break;
 					}
 					case 2: {
+						printf("\n1 1RM-Blida\n");
+						printf("2 2RM-Oran\n");
+						printf("3 3RM-Bechar\n");
+						printf("4 4RM-Ouargla\n");
+						printf("5 5RM-Constantine\n");
+						printf("6 6RM-Tamanrasset\n");
 						printf("Veuillez entrer la region militaire voulu : ");
 						int region_militaire;
 						scanf("%d", &region_militaire);
