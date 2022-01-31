@@ -115,10 +115,12 @@ int main () {
 						int num;
 						printf("Veuillez entrer le numero de la force armee a supprimer : ");
 						scanf("%d", &num);
+						int count = 1;
 						while (fread(&force_armee, sizeof(Force_armee), 1, F1) == 1) {
 							if (force_armee.num == num) {
 								continue;
 							}
+							force_armee.num = count++;
 							fwrite(&force_armee, sizeof(Force_armee), 1, F);
 						}
 						fclose(F1);

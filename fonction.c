@@ -462,7 +462,7 @@ void Recherche_Dichotomique(Index *index, int N, int cle, int opt, int *pos, int
 
 // Module pour rechercher un personnel selon la matricule
 void Recherche(LObarreF *F, int matricule, int *trouve, int *i, int *j) {
-	FILE *G = fopen("index.bin", "rb+");	// Ouverture du fichier d'index
+	FILE *G = fopen("index.bin", "rb");	// Ouverture du fichier d'index
 	int N = entete(F, 4) - entete(F, 5);	// Le nombre de personnels dans le fichier de donnees
 	int pos = 0;
 	Index index[N];	// La table d'index
@@ -1055,11 +1055,12 @@ Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n) {
 				}
 				break;		  
 			}
-		}	 
+		}	
+	  Tenreg *personnels = NULL;	
 	   if (existe) {	
 			*n = j1;
 			ind = (Index*) realloc (ind, j1 * sizeof(Index));
-			Tenreg *personnels = (Tenreg*) malloc (j1 * sizeof(Tenreg));
+			personnels = (Tenreg*) malloc (j1 * sizeof(Tenreg));
 			Tri(ind, 0, j1 - 1, 2);
 			for (int k = 0; k < j1; k++) {
 				LireDir(F, ind[k].adr / 85 + 1, &buf);			// Recuperation du bloc a utiliser
@@ -1067,10 +1068,10 @@ Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n) {
 			}
 			free(ind);
 			fclose(G);			// Fermeture du fichie d'index
-			return personnels;		// Retourne la table des personnels 
 		} else {
 			printf("Cette categorie de grades est inexistante !\n");
 		}
+		return personnels;		// Retourne la table des personnels 
 	}
 	fclose(G);		// Fermeture du fichier d'index
 }

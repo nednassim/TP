@@ -51,7 +51,9 @@ Creation du fichier de donnees PERSONNEL-ANP_DZ.bin :
 		- On ecrit la table d'index dans le fichier d'index
 		- On ferme le fichier de donnees PERSONNEL-ANP_DZ.bin et le fichier d'index
 		
-
+Cout : 
+	(N / b) EcrireDir : fichier de donnees + 1 ecriture : fichier d'index 
+	Total : (N / b) + 1 acces disque
 
 // Module pour la recherche dichotomique dans la table d'index
 void Recherche_Dichotomique(Index *index, int N, int cle, int opt, int *pos, int *trouve) 
@@ -86,6 +88,9 @@ void Recherche(LObarreF *F, int matricule, int *trouve, int *i, int *j)
 	- Si le personnel est trouve : on renvoit le numero de bloc et sa position
 	- Sinon : on renvoie la position libre dans le bloc queue
 
+Cout : 
+	1 lecture : le fichier d'index  
+	Total :  1 acces disque
 
 
 // Module d'insertion dans un fichier LObarreF
@@ -105,6 +110,11 @@ void Insertion(LObarreF *F)
 		 - On met a jour la table d'index dans le fichier d'index
 		 - On ferme le fichier d'index
 	
+Cout : 
+	4 lectures : fichiers de la base de donnees (force_armee, grade, region_militaire, wilaya)
+	+ 1 LireDir(dans le pire des cas) +  1 EcrireDir + (1 lecture + 2 ecriture) : fichier d'index
+	Total : 8 acces disque au meilleur cas
+			  9 acces disque au pire cas
 
 
 // Module pour supprimer un  personnel a une position donnee
@@ -117,7 +127,10 @@ void Suppression1(LObarreF *F, int i, int j)
 	- On supprime le personnel
 	- On met a jour le bloc concerne et l'entete
 
-
+Cout :
+	1 LireDir(2 au pire des cas) + 1 EcrireDir(2 au pire des cas) : fichier de donnees
+	Total : 2 acces disque au meilleur cas
+			  4 acces disque au pire cas
 	
 // Module d'epuration dans un fichier LObarreF
 void Epuration(LObarreF *F) 
@@ -135,7 +148,10 @@ void Epuration(LObarreF *F)
 	- On ecrit la table temporaire (qui ne contient pas de duplique) dans le fichier d'index
 	- On ferme le fichier d'index
 
-
+Cout :
+	2 lectures : fichier d'index + cout(Suppression1) + 2 ecriture : fichier d'index
+	Total :	6 acces disque au meilleur cas
+				8 acces disque au pire cas
 
 // Module pour modifier la region militaire d'un personnel donnee par son matricule
 Tenreg Modifier_Region_Militaire(LObarreF *F, int matricule, int region_militaire, int *pos) 
@@ -154,7 +170,9 @@ Tenreg Modifier_Region_Militaire(LObarreF *F, int matricule, int region_militair
 		- On ferme le fichier d'index
 		- On retourne le personnel (pour faciliter son affichage)
 
-
+Cout :
+	cout(Recherche) + 1 LireDir + 1 EcrireDir : fichier de donnees + 1 lecture + 1 ecriture : fichier d'index
+	Total : 5 acces disque
 
 // Module de suppression physique dans un fichier LObarreF
 void Suppression(LObarreF *F, int matricule)
@@ -170,6 +188,11 @@ void Suppression(LObarreF *F, int matricule)
 			- On ecrase l'index du personnel par l'index du dernier personnel
 			- On met a jour le fichier d'index
 			- On ferme le fichier d'index
+
+Cout :
+	cout(Recherche) + 1 LireDir(2 au pire des cas) + 1 EcrireDir(2 au pire des cas) + 1 lecture + 2 ecriture (fichier d'index)
+	Total : 6 acces disque au meilleur cas
+			  8 acces disque au pire cas
 
 
 
@@ -195,6 +218,10 @@ void Suppression_Force_Armee(LObarreF *F, int force_armee)
 	- On met a jour le fichier d'index
 	- On ferme le fichier d'index
 
+Cout : 
+	2 lecture : fichier d'index, + N cout(Suppression1) + 2 ecriture : fichier d'index // N le nombre de personnels a supprimer
+	Total :
+		4 + N acces disque
 
 
 // Module pour consulter tous les personnels d'une region donnee ayant l'age dans l'intervalle donne
@@ -227,6 +254,10 @@ Tenreg *Recherche_Intervale(LObarreF *F, int region_militaire, int age_min, int 
 	- On ferme le fichier d'index 
 	- On retourne la table de personnels
 
+Cout :
+	2 lectures : fichier d'index, + N LireDir + 2 ecritures : fichier d'index // N le nombre de personnels a supprimer
+	Total :
+		4 + N acces disque 
 
 
 // Module pour consulter tous les personnels appartenant a une categorie de grade donnee
@@ -264,6 +295,11 @@ Tenreg *Recherche_Categorie_Grade(LObarreF *F, int categorie, int *n)
 	- On ferme le fichier d'index 
 	- On retourne la table de personnels
 
+Cout :
+	2 lectures : fichier d'index, + N LireDir + 2 ecritures : fichier d'index // N le nombre de personnels a supprimer
+	Total :
+		4 + N acces disque 
+
 
 
 // Module pour fragmenter le fichier en 6 fichiers selon la region militaire
@@ -276,9 +312,10 @@ void Fragmentation(LObarreF *F)
 
 	- On ferme les fichiers F1, F2, F3, F4, F5 et F6 correspondant a la region militaire 1, 2, 3, 4, 5 et 6 respectivement
 
+Cout :
+	N LireDir : fichier de donnees + N EcrireDir : fichiers fragmentes
 
-
-
+	
 
 
 

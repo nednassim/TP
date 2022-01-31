@@ -7,7 +7,7 @@ int main () {
 	scanf("%d", &opt);
 	Tenreg personnel;
 	memset(&personnel, 0, sizeof(Tenreg));
-	char str[] = "+----------------------------------------------+";
+	char str[] = "*+--------------------------------------------------------------+*";
 	switch(opt) {
 		case 1: {
 			FILE *F1 = fopen("F/F1", "rb");

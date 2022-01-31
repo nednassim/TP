@@ -198,19 +198,18 @@ void Afficher_Fichier(LObarreF *F) {
 	fclose(F5);
 
    Afficher_Entete(F);
-	int i = 1;
+	int i = 1, j = 1;
    char str[] = "#****************************************************************#";
    char str1[] = "*+--------------------------------------------------------------+*";
-   printf("%s\n", str);
-   int len = 62 - ((i / 10) ? 2 : 1) - 9;
-   printf("*| Bloc : %d | %*s\n", i, len, "|*");
    printf("%s\n", str1);
-   LireDir(F, i, &buf);
-	int j = 1;
 	while (j <= 3 && j <= entete(F, 1)) {
+	   int len = 62 - ((j / 10) ? 2 : 1) - 9;
+   	printf("*| Bloc : %d | %*s\n", j, len, "|*");
+   	printf("%s\n", str);
+   	LireDir(F, j, &buf);
 		for (int i = 0; i < buf.nb; i++) {
 			int len = 62 - ((i / 10) ? 2 : 1) - 14;
-			printf("*| Personnel : %d  |%*s\n", j++, len, "|*");
+			printf("*| Personnel : %d  |%*s\n", i + 1, len, "|*");
 			printf("*| ---------------%*s\n", 48, "|*");
 			printf("*| Matricule : %d %*s \n", buf.tab[i].matricule, 44, "|*");
 			int len1 = 62 - strlen(buf.tab[i].nom) - 6;
@@ -230,10 +229,10 @@ void Afficher_Fichier(LObarreF *F) {
 			printf("*| Region militaire : %s %*s\n", region_militaires[buf.tab[i].region_militaire - 1], len7, "|*");
 			printf("%s\n", str1);
 		}
-		j++;
 	   printf("%s\n", str);
-   	printf("\t\t\t *| Bloc : %d  |*\n", i );
+   	printf("\t\t\t *| Bloc : %d  |*\n", j);
 	   printf("\t\t\t * * * * * * * *\n");
+		j++;
 	}
    Afficher_Entete(F);
 }  

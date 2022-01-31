@@ -193,7 +193,7 @@ int main () {
 						printf("4 4RM-Ouargla\n");
 						printf("5 5RM-Constantine\n");
 						printf("6 6RM-Tamanrasset\n");
-						printf("Veuillez entrer la region militaire voulu : ");
+						printf("\nVeuillez entrer la region militaire voulu : ");
 						int region_militaire;
 						scanf("%d", &region_militaire);
 						printf("Veuillez entrer l'age minimum est l'age maximum tels que l'age du personnel appartient a [age_min, age_max] : ");
@@ -201,29 +201,44 @@ int main () {
 						scanf("%d %d", &age_min, &age_max);
 						int n;
 						Tenreg *personnels = Recherche_Intervale(F, region_militaire, age_min, age_max, &n);
-						printf("*+--------------------------------------------+*\n");
-						for (int i = 0; i < n; i++) {
-							Afficher_Perso(personnels[i], i + 1);
-							printf("*+--------------------------------------------+*\n");
+						printf("*+--------------------------------------------------------------+*\n");
+						if (personnels != NULL) {
+							for (int i = 0; i < n; i++) {
+								Afficher_Perso(personnels[i], i + 1);
+								printf("*+--------------------------------------------------------------+*\n");
+							}
 						}
 						free(personnels);
 						break;			 
 					}
-					case 3: {
-						printf("Veuillez entrer la categorie de grade voulue : ");
+					case 3: {		
+					   printf("\n1) Officiers-generaux : 1 : Général de corps d’armée, 2 : Général-Major, 3 : Général\n");
+					 	printf("2) Officiers-superieurs : 4 : Colonel, 5: Lieutenant-colonel, 6 : Commandant \n");
+					 	printf("3) Officiers : 7 : Capitaine, 8 :  Lieutenant, 9 : Sous-lieutenant, 10 : Aspirant \n");
+					   printf("4) Sous-officiers : 11 : Adjudant-chef, 12 : Adjudant, 13 : Sergent-chef, 14 : Sergent \n");
+						printf("5) Hommes de troupes : 15 : Caporal-chef, 16 : Caporal, 17 : Djoundi \n");
+						printf("\nVeuillez entrer la categorie de grade voulue : ");
 						int categorie_grade;
 						scanf("%d", &categorie_grade);
 						int n;
-						Tenreg *personnels = Recherche_Categorie_Grade(F, categorie_grade, &n);
-						printf("*+--------------------------------------------+*\n");
-						for (int i = 0; i < n; i++) {
-							Afficher_Perso(personnels[i], i + 1);
-							printf("*+--------------------------------------------+*\n");
+						Tenreg *personnels = Recherche_Categorie_Grade(F, categorie_grade, &n);		
+						printf("*+--------------------------------------------------------------+*\n");
+						if (personnels != NULL) {
+							for (int i = 0; i < n; i++) {
+								Afficher_Perso(personnels[i], i + 1);
+								printf("*+--------------------------------------------------------------+*\n");
+							}
 						}
 						free(personnels);
 						break;			 
 					}
 					case 4: {
+						printf("\n1 1RM-Blida\n");
+						printf("2 2RM-Oran\n");
+						printf("3 3RM-Bechar\n");
+						printf("4 4RM-Ouargla\n");
+						printf("5 5RM-Constantine\n");
+						printf("6 6RM-Tamanrasset\n\n");
 						system("./F/controle");
 						break;
 					}
